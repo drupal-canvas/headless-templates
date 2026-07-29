@@ -1,0 +1,40 @@
+# Dependencies
+/node_modules/
+
+# Build output
+/dist/
+/dist-ssr/
+/.nitro/
+/.output/
+/.tanstack/
+/.vinxi/
+/.wrangler/
+/__unconfig*
+/todos.json
+
+# Test coverage
+/coverage/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor and OS files
+.DS_Store
+.fleet/
+.idea/
+
+# TypeScript
+*.tsbuildinfo
+
+# Canvas build artifacts
+/.canvas/

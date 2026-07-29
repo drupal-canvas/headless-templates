@@ -1,0 +1,66 @@
+---
+interface Image { src: string; alt?: string }
+interface Props {
+  backgroundImage: Image; layout: 'left_aligned' | 'centered'; preHeading?: string;
+  headingElement?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  headingSize: 'extra_large' | 'large' | 'medium' | 'small';
+  heading?: string; text?: string; textColor: 'dark' | 'light'; darkenImage?: boolean;
+}
+const { backgroundImage, layout = 'left_aligned', preHeading, headingElement = 'h2', headingSize = 'large', heading, text, textColor = 'dark', darkenImage = false } = Astro.props;
+const layouts: Record<string, string> = {
+  text_image: 'flex-col md:flex-row',
+  image_text: 'flex-col md:flex-row-reverse',
+};
+const headingSizes = { small: 'text-lg', medium: 'text-2xl', large: 'text-4xl', extra_large: 'text-6xl' };
+const preHeadingSizes = { small: 'text-xs', medium: 'text-sm', large: 'text-base', extra_large: 'text-lg' };
+const Heading = headingElement;
+---
+
+<div
+  class="flex min-h-[672px] w-full justify-start bg-cover bg-center bg-no-repeat"
+  style={backgroundImage?.src ? `background-image: url(${backgroundImage.src})` : undefined}
+>
+  <div class:list={['align-center h-full w-full px-8 py-16', darkenImage && 'backdrop-brightness-75']}>
+    <div class="flex w-full justify-start bg-cover bg-center bg-no-repeat py-24">
+      <div class="mx-6 flex w-full items-center justify-center">
+        <div class:list={['mx-auto flex w-full max-w-[1360px] gap-8 md:items-center', layouts[layout]]}>
+          <div class="flex w-full flex-col items-start justify-center gap-4 md:w-1/2">
+            <div class="mb-4">
+              {(preHeading || heading) && (
+                <div class="dark flex w-full flex-col items-start text-left">
+                  {preHeading && (
+                    <div class:list={[
+                      'mb-4 font-bold',
+                      preHeadingSizes[headingSize],
+                      textColor === 'light' ? 'text-primary-light' : 'text-primary-dark',
+                      'text-shadow-md',
+                    ]}>{preHeading}</div>
+                  )}
+                  {heading && (
+                    <Heading class:list={[
+                      'leading-[normal] font-bold text-balance',
+                      headingSizes[headingSize],
+                      textColor === 'light' ? 'text-white' : 'text-black',
+                      'text-shadow-md',
+                    ]}>{heading}</Heading>
+                  )}
+                </div>
+              )}
+            </div>
+            {text && (
+              <div
+                class:list={[
+                  'my-8 mb-4 text-lg/8 text-shadow-md',
+                  textColor === 'light' ? '!text-white' : '!text-black',
+                ]}
+                set:html={text}
+              />
+            )}
+            <div class="flex w-full min-w-3xs gap-4"><slot name="buttons" /></div>
+          </div>
+          <div class="flex w-full items-center md:w-1/2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

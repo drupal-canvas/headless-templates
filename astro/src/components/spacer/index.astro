@@ -1,0 +1,7 @@
+---
+interface Props { height: 'small' | 'medium' | 'large' | 'extra_large' }
+const { height = 'small' } = Astro.props;
+const heights = { small: 'h-8', medium: 'h-12', large: 'h-16', extra_large: 'h-24' };
+---
+
+<div class={heights[height]} aria-hidden="true"></div>

@@ -1,0 +1,9 @@
+---
+interface Props { video: { src: string; poster?: string } }
+const { video } = Astro.props;
+---
+
+<video class="w-full" controls>
+  <source src={video.src} />
+  <track kind="captions" />
+</video>

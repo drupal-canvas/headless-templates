@@ -1,0 +1,26 @@
+---
+interface Props {
+  class?: string;
+  text?: string;
+  textSize?: 'extra_small' | 'small' | 'normal' | 'large' | 'extra_large';
+  textColor?: 'dark' | 'light';
+  textShadow?: 'light' | 'medium' | 'heavy';
+}
+const {
+  class: className,
+  text,
+  textSize = 'normal',
+  textColor = 'dark',
+  textShadow,
+} = Astro.props;
+const sizes = { extra_small: 'text-xs', small: 'text-sm', normal: 'text-base/6', large: 'text-lg/8', extra_large: 'text-xl/8' };
+const shadows = { light: 'text-shadow-sm', medium: 'text-shadow-md', heavy: 'text-shadow-lg' };
+---
+
+{text && <div class:list={[
+  'my-8',
+  sizes[textSize],
+  textColor === 'light' ? '!text-white' : '!text-black',
+  textShadow && shadows[textShadow],
+  className,
+]} set:html={text} />}

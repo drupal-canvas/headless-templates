@@ -1,0 +1,10 @@
+{
+  "componentDir": "app/components",
+  "aliasBaseDir": "app",
+  "globalCssPath": "app/assets/css/main.css",
+  "sync": {
+    "pages": false,
+    "contentTemplates": false,
+    "regions": false
+  }
+}

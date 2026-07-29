@@ -1,0 +1,47 @@
+{
+  "name": "canvas-headless-template-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "workbench": "canvas-workbench",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "check": "npm run lint && npm run type-check"
+  },
+  "dependencies": {
+    "@drupal-canvas/headless": "^0.1.0",
+    "@drupal-canvas/headless-next": "^0.0.2",
+    "@drupal-canvas/headless-react": "^0.1.0",
+    "class-variance-authority": "^0.7.1",
+    "drupal-canvas": "^0.4.3",
+    "next": "^16.2.12",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "overrides": {
+    "postcss": "^8.5.10",
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@drupal-canvas/cli": "^0.21.0",
+    "@drupal-canvas/eslint-config": "^0.7.0",
+    "@drupal-canvas/workbench": "^0.9.0",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.12",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true,
+    "unrs-resolver@1.12.2": true
+  }
+}

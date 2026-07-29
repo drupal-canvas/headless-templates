@@ -1,0 +1,11 @@
+name: Header
+machineName: header
+status: true
+required: []
+props:
+  properties: []
+slots:
+  logo:
+    title: Logo
+  menu:
+    title: Menu

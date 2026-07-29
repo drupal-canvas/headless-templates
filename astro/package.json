@@ -1,0 +1,33 @@
+{
+  "name": "canvas-headless-template-astro",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "eslint .",
+    "type-check": "astro check",
+    "check": "npm run lint && npm run type-check"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.0.2",
+    "@drupal-canvas/headless": "^0.1.0",
+    "@drupal-canvas/headless-astro": "^0.1.0",
+    "astro": "^7.1.6"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@drupal-canvas/cli": "^0.21.0",
+    "@drupal-canvas/eslint-config": "^0.7.0",
+    "@tailwindcss/vite": "^4.1.18",
+    "eslint": "^9.39.4",
+    "eslint-plugin-astro": "^1.5.0",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3"
+  }
+}

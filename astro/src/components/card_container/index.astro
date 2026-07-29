@@ -1,0 +1,60 @@
+---
+interface Props {
+  preHeading?: string;
+  heading?: string;
+  headingSize?: 'extra_large' | 'large' | 'medium' | 'small';
+  textColor: 'dark' | 'light';
+  headingPosition?: 'left_aligned' | 'center_aligned' | 'right_aligned';
+  headingElement?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  layout: string;
+}
+
+const {
+  preHeading,
+  heading,
+  headingSize = 'large',
+  textColor = 'dark',
+  headingPosition = 'center_aligned',
+  headingElement = 'h2',
+  layout,
+} = Astro.props;
+const headingSizes = { small: 'text-lg', medium: 'text-2xl', large: 'text-4xl', extra_large: 'text-6xl' };
+const preHeadingSizes = { small: 'text-xs', medium: 'text-sm', large: 'text-base', extra_large: 'text-lg' };
+const align = { left_aligned: 'items-start text-left', center_aligned: 'items-center text-center', right_aligned: 'items-end text-right' };
+const layouts: Record<string, string> = {
+  '50-50': 'md:grid-cols-[1fr_1fr]',
+  '33-33-33': 'md:grid-cols-[1fr_1fr_1fr]',
+  '75-25': 'md:grid-cols-[3fr_1fr]',
+  '25-75': 'md:grid-cols-[1fr_3fr]',
+  '67-33': 'md:grid-cols-[2fr_1fr]',
+  '33-67': 'md:grid-cols-[1fr_2fr]',
+  '50-25-25': 'md:grid-cols-[2fr_1fr_1fr]',
+  '25-25-50': 'md:grid-cols-[1fr_1fr_2fr]',
+  '25-25-25-25': 'sm:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_1fr_1fr_1fr]',
+};
+const Heading = headingElement;
+---
+
+<div class="mx-6 flex flex-col items-center gap-16">
+  {heading && (
+    <div class:list={['dark flex w-full flex-col', align[headingPosition]]}>
+      {preHeading && (
+        <div class:list={[
+          'mb-4 font-bold',
+          preHeadingSizes[headingSize],
+          textColor === 'light' ? 'text-primary-light' : 'text-primary-dark',
+        ]}>{preHeading}</div>
+      )}
+      <Heading class:list={[
+        'leading-[normal] font-bold text-balance',
+        headingSizes[headingSize],
+        textColor === 'light' ? 'text-white' : 'text-black',
+      ]}>{heading}</Heading>
+    </div>
+  )}
+  <div class="mx-auto w-full max-w-[1360px] px-6">
+    <div class:list={['grid w-full gap-4', layouts[layout]]}>
+      <slot name="content" />
+    </div>
+  </div>
+</div>

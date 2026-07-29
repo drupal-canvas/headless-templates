@@ -1,0 +1,14 @@
+---
+interface Props {
+  backgroundColor?: string;
+  image: { src: string; alt?: string; width?: number; height?: number };
+}
+const { backgroundColor = '#F1F5F9', image } = Astro.props;
+---
+
+{image?.src && <div
+  class="align-center flex max-h-33 max-w-50 flex-col justify-center gap-4 rounded-2xl p-6 leading-[normal]"
+  style={`background-color: ${backgroundColor}`}
+>
+  <img src={image.src} alt={image.alt ?? ''} width={image.width} height={image.height} class="h-auto w-50 object-contain" />
+</div>}

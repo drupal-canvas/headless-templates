@@ -1,0 +1,45 @@
+{
+  "name": "canvas-headless-template-tanstack-start",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "scripts": {
+    "dev": "vite dev --port 3000 --configLoader runner",
+    "build": "vite build --configLoader runner",
+    "preview": "vite preview --configLoader runner",
+    "workbench": "canvas-workbench",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "check": "npm run lint && npm run type-check"
+  },
+  "dependencies": {
+    "@drupal-canvas/headless": "^0.1.0",
+    "@drupal-canvas/headless-react": "^0.1.0",
+    "@drupal-canvas/headless-tanstack-start": "^0.0.2",
+    "@tanstack/react-router": "1.170.18",
+    "@tanstack/react-start": "1.168.32",
+    "class-variance-authority": "^0.7.1",
+    "drupal-canvas": "^0.4.3",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@drupal-canvas/cli": "^0.21.0",
+    "@drupal-canvas/eslint-config": "^0.7.0",
+    "@drupal-canvas/workbench": "^0.9.0",
+    "@tanstack/eslint-config": "^0.4.0",
+    "@tanstack/router-plugin": "1.168.23",
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "6.0.4",
+    "eslint": "^9.39.4",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.4"
+  }
+}

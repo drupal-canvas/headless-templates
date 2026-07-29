@@ -1,0 +1,54 @@
+{
+  "name": "canvas-headless-template-nuxt",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "type-check": "nuxt typecheck",
+    "check": "npm run lint && npm run type-check"
+  },
+  "dependencies": {
+    "@drupal-canvas/headless": "^0.1.0",
+    "@drupal-canvas/headless-nuxt": "^0.1.0",
+    "nuxt": "4.5.1",
+    "vue": "3.5.40",
+    "vue-router": "5.2.0"
+  },
+  "overrides": {
+    "archiver": {
+      "readdir-glob": {
+        ".": "2.0.3",
+        "minimatch": "10.2.6"
+      }
+    },
+    "archiver-utils": {
+      "glob": "13.0.6"
+    },
+    "rolldown": "1.1.5"
+  },
+  "devDependencies": {
+    "@drupal-canvas/cli": "^0.21.0",
+    "@drupal-canvas/eslint-config": "^0.7.0",
+    "@nuxt/nitro-server": "4.5.1",
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/node": "^22.10.2",
+    "eslint": "^9.39.4",
+    "eslint-plugin-vue": "^10.8.0",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vue-eslint-parser": "^10.4.0",
+    "vue-tsc": "^3.2.2"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true
+  }
+}

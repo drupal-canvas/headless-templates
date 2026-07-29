@@ -1,0 +1,86 @@
+---
+interface Image { src: string; alt?: string; width?: number; height?: number }
+interface Props {
+  image?: Image;
+  layout?: 'text_image' | 'image_text';
+  columnWidths?: '33_66' | '50_50' | '66_33';
+  preHeading?: string;
+  heading?: string;
+  headingElement?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  headingSize?: 'extra_large' | 'large' | 'medium' | 'small';
+  text?: string;
+  textColor?: 'dark' | 'light';
+  textShadow?: 'light' | 'medium' | 'heavy';
+}
+const {
+  image,
+  layout = 'text_image',
+  columnWidths = '50_50',
+  preHeading,
+  heading,
+  headingElement = 'h2',
+  headingSize = 'large',
+  text,
+  textColor = 'dark',
+  textShadow,
+} = Astro.props;
+const widths = { '33_66': ['md:w-1/3', 'md:w-2/3'], '50_50': ['md:w-1/2', 'md:w-1/2'], '66_33': ['md:w-2/3', 'md:w-1/3'] };
+const layouts = { text_image: 'flex-col md:flex-row', image_text: 'flex-col md:flex-row-reverse' };
+const headingSizes = { small: 'text-lg', medium: 'text-2xl', large: 'text-4xl', extra_large: 'text-6xl' };
+const preHeadingSizes = { small: 'text-xs', medium: 'text-sm', large: 'text-base', extra_large: 'text-lg' };
+const textShadows = { light: 'text-shadow-sm', medium: 'text-shadow-md', heavy: 'text-shadow-lg' };
+const Heading = headingElement;
+---
+
+<div class="flex w-full justify-start bg-cover bg-center bg-no-repeat py-24">
+  <div class="mx-6 flex w-full items-center justify-center">
+    <div class:list={['mx-auto flex w-full max-w-[1360px] gap-8 md:items-center', layouts[layout]]}>
+      <div class:list={['flex w-full flex-col items-start justify-center gap-4', widths[columnWidths][0]]}>
+        <div class="mb-4">
+          {(preHeading || heading) && (
+            <div class="dark flex w-full flex-col items-start text-left">
+              {preHeading && (
+                <div class:list={[
+                  'mb-4 font-bold',
+                  preHeadingSizes[headingSize],
+                  textColor === 'light' ? 'text-primary-light' : 'text-primary-dark',
+                  textShadow && textShadows[textShadow],
+                ]}>{preHeading}</div>
+              )}
+              {heading && (
+                <Heading class:list={[
+                  'leading-[normal] font-bold text-balance',
+                  headingSizes[headingSize],
+                  textColor === 'light' ? 'text-white' : 'text-black',
+                  textShadow && textShadows[textShadow],
+                ]}>{heading}</Heading>
+              )}
+            </div>
+          )}
+        </div>
+        {text && (
+          <div
+            class:list={[
+              'my-8 mb-4 text-lg/8',
+              textColor === 'light' ? '!text-white' : '!text-black',
+              textShadow && textShadows[textShadow],
+            ]}
+            set:html={text}
+          />
+        )}
+        <div class="flex w-full min-w-3xs gap-4"><slot name="buttons" /></div>
+      </div>
+      <div class:list={['flex w-full items-center', widths[columnWidths][1]]}>
+        {image && (
+          <img
+            src={image.src}
+            alt={image.alt ?? ''}
+            width={image.width}
+            height={image.height}
+            class="h-auto w-full"
+          />
+        )}
+      </div>
+    </div>
+  </div>
+</div>

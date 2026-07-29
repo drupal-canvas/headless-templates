@@ -1,0 +1,28 @@
+---
+interface Props {
+  borderColor?: 'gray_200' | 'gray_300' | 'gray_400' | 'primary_200' | 'primary_300';
+  variant?: 'default' | 'bordered' | 'separated';
+}
+
+const { borderColor = 'gray_200', variant = 'default' } = Astro.props;
+const borderClasses = {
+  gray_200: 'divide-y divide-gray-200',
+  gray_300: 'divide-y divide-gray-300',
+  gray_400: 'divide-y divide-gray-400',
+  primary_200: 'divide-y divide-primary-200',
+  primary_300: 'divide-y divide-primary-300',
+};
+---
+
+<div
+  class:list={[
+    'w-full',
+    variant === 'separated' && 'flex flex-col gap-2',
+    variant === 'default' && borderClasses[borderColor],
+  ]}
+  data-accordion-group
+  data-border-color={borderColor}
+  data-variant={variant}
+>
+  <slot name="items" />
+</div>

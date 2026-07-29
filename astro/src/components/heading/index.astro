@@ -1,0 +1,41 @@
+---
+interface Props {
+  class?: string;
+  preHeading?: string;
+  heading?: string;
+  textColor?: 'dark' | 'light';
+  headingElement?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  headingSize?: 'small' | 'medium' | 'large' | 'extra_large';
+  layout?: 'left_aligned' | 'center_aligned' | 'right_aligned';
+  textShadow?: 'light' | 'medium' | 'heavy';
+}
+const {
+  class: className,
+  preHeading,
+  heading,
+  textColor = 'dark',
+  headingElement: Heading = 'h2',
+  headingSize = 'extra_large',
+  layout = 'left_aligned',
+  textShadow,
+} = Astro.props;
+const sizes = { small: 'text-lg', medium: 'text-2xl', large: 'text-4xl', extra_large: 'text-6xl' };
+const preHeadingSizes = { small: 'text-xs', medium: 'text-sm', large: 'text-base', extra_large: 'text-lg' };
+const align = { left_aligned: 'items-start text-left', center_aligned: 'items-center text-center', right_aligned: 'items-end text-right' };
+const shadows = { light: 'text-shadow-sm', medium: 'text-shadow-md', heavy: 'text-shadow-lg' };
+---
+
+{(preHeading || heading) && <div class:list={['dark flex w-full flex-col', align[layout], className]}>
+  {preHeading && <div class:list={[
+    'mb-4 font-bold',
+    preHeadingSizes[headingSize],
+    textColor === 'light' ? 'text-primary-light' : 'text-primary-dark',
+    textShadow && shadows[textShadow],
+  ]}>{preHeading}</div>}
+  {heading && <Heading class:list={[
+    'leading-[normal] font-bold text-balance',
+    sizes[headingSize],
+    textColor === 'light' ? 'text-white' : 'text-black',
+    textShadow && shadows[textShadow],
+  ]}>{heading}</Heading>}
+</div>}

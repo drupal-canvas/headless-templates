@@ -1,0 +1,8 @@
+---
+interface Props { width: 'normal' | 'wide' }
+const { width = 'normal' } = Astro.props;
+---
+
+<section class:list={['mx-auto my-8 px-4', width === 'wide' ? 'max-w-4xl' : 'max-w-2xl']}>
+  <slot name="content" />
+</section>

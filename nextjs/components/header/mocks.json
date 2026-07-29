@@ -1,0 +1,30 @@
+{
+  "mocks": [
+    {
+      "name": "Default",
+      "props": {},
+      "slots": {
+        "logo": ["site-name"],
+        "menu": ["menu-link"]
+      },
+      "elements": {
+        "site-name": {
+          "type": "text",
+          "props": {
+            "text": "Canvas",
+            "textSize": "normal",
+            "textColor": "dark"
+          }
+        },
+        "menu-link": {
+          "type": "button",
+          "props": {
+            "variant": "nav_link_dark",
+            "text": "Explore",
+            "link": "/"
+          }
+        }
+      }
+    }
+  ]
+}
