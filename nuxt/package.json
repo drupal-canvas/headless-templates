@@ -36,6 +36,7 @@
     "@drupal-canvas/cli": "^0.21.0",
     "@drupal-canvas/eslint-config": "^0.7.0",
     "@nuxt/nitro-server": "4.5.1",
+    "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^22.10.2",
     "eslint": "^9.39.4",

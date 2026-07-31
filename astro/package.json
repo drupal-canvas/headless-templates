@@ -24,6 +24,7 @@
     "@astrojs/check": "^0.9.6",
     "@drupal-canvas/cli": "^0.21.0",
     "@drupal-canvas/eslint-config": "^0.7.0",
+    "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.1.18",
     "eslint": "^9.39.4",
     "eslint-plugin-astro": "^1.5.0",
