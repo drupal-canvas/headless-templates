@@ -16,9 +16,9 @@
     "check": "npm run lint && npm run type-check"
   },
   "dependencies": {
-    "@drupal-canvas/headless": "^0.1.0",
-    "@drupal-canvas/headless-react": "^0.1.0",
-    "@drupal-canvas/headless-tanstack-start": "^0.0.2",
+    "@drupal-canvas/headless": "^0.2.0",
+    "@drupal-canvas/headless-react": "^0.2.0",
+    "@drupal-canvas/headless-tanstack-start": "^0.1.0",
     "@tanstack/react-router": "1.170.18",
     "@tanstack/react-start": "1.168.32",
     "class-variance-authority": "^0.7.1",
@@ -27,7 +27,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@drupal-canvas/cli": "^0.21.0",
+    "@drupal-canvas/cli": "^0.22.0",
     "@drupal-canvas/eslint-config": "^0.7.0",
     "@drupal-canvas/workbench": "^0.9.0",
     "@tailwindcss/typography": "^0.5.20",
