@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import type { Page } from '@drupal-canvas/headless/server';
+import {
+  isPageRedirect,
+  type Page,
+  type PageResult,
+} from '@drupal-canvas/headless';
+
+type NuxtHeadInput = Parameters<typeof useHead>[0];
 
 const route = useRoute();
 const slug = computed(() =>
@@ -10,17 +16,42 @@ const slug = computed(() =>
 const path = computed(
   () => `/${slug.value.split('/').map(encodeURIComponent).join('/')}`,
 );
-const { data: page } = await useFetch<Page | null>(
+const { data: result } = await useFetch<PageResult | null>(
   () => `/api/page${path.value}`,
 );
 
-if (import.meta.server && !page.value) {
+const redirectResult = computed(() =>
+  result.value && isPageRedirect(result.value) ? result.value.redirect : null,
+);
+
+if (redirectResult.value) {
+  await navigateTo(redirectResult.value.url, {
+    external: redirectResult.value.external,
+    redirectCode: redirectResult.value.statusCode,
+  });
+}
+
+watch(redirectResult, async (redirect) => {
+  if (redirect) {
+    await navigateTo(redirect.url, {
+      external: redirect.external,
+      redirectCode: redirect.statusCode,
+    });
+  }
+});
+
+const page = computed<Page | null>(() => {
+  const value = result.value;
+  return value && !isPageRedirect(value) ? value : null;
+});
+
+if (import.meta.server && !result.value) {
   setResponseStatus(useRequestEvent()!, 404);
 }
 
-useHead({
-  title: () => (page.value?.title ? String(page.value.title) : 'Not found'),
-});
+useHead(
+  (() => page.value?.head ?? { title: 'Not found' }) as NuxtHeadInput,
+);
 </script>
 
 <template>

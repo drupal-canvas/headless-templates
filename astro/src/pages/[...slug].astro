@@ -1,21 +1,37 @@
 ---
 import CanvasComponentTree from '@drupal-canvas/headless-astro/CanvasComponentTree.astro';
-import { fetchPage } from '@drupal-canvas/headless-astro';
+import { fetchPage, isPageRedirect } from '@drupal-canvas/headless-astro';
+import { createHead } from 'unhead/server';
 import Layout from '../layouts/Layout.astro';
+
+import type { PageHead } from '@drupal-canvas/headless-astro';
+
+type AstroHead = Omit<PageHead, 'title'> & { title?: string };
 
 const { slug } = Astro.params;
 const path = `/${(slug ?? '')
   .split('/')
   .map(encodeURIComponent)
   .join('/')}`;
-const page = await fetchPage(Astro, path);
+const result = await fetchPage(Astro, path);
+
+if (result && isPageRedirect(result)) {
+  return Astro.redirect(result.redirect.url, result.redirect.statusCode);
+}
+
+const page = result;
 
 if (!page) {
   Astro.response.status = 404;
 }
+
+const head = createHead<AstroHead>();
+head.push({ link: [{ rel: 'icon', href: '/favicon.ico' }] });
+head.push(page?.head ?? { title: 'Not found' });
+const { headTags } = head.render();
 ---
 
-<Layout title={page ? page.title : 'Not found'}>
+<Layout headTags={headTags}>
   {
     page ? (
       <CanvasComponentTree tree={page.content} />

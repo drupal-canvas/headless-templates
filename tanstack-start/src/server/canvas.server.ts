@@ -12,7 +12,7 @@ import {
   isDraftSessionExpired,
 } from '@drupal-canvas/headless-tanstack-start'
 
-import type { Page } from '@drupal-canvas/headless-tanstack-start'
+import type { PageResult } from '@drupal-canvas/headless-tanstack-start'
 import type {
   Article,
   CanvasPage,
@@ -74,6 +74,6 @@ export async function readContentLists(): Promise<ContentLists> {
  * Resolves a Drupal path through Drupal's routing (the SDK's fetchPage()),
  * carrying the live draft session's bearer token when there is one.
  */
-export function readPageForPath(path: string): Promise<Page | null> {
+export function readPageForPath(path: string): Promise<PageResult | null> {
   return fetchPage(path)
 }
