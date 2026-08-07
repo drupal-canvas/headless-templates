@@ -12,9 +12,9 @@
     "check": "npm run lint && npm run type-check"
   },
   "dependencies": {
-    "@drupal-canvas/headless": "^0.2.0",
-    "@drupal-canvas/headless-next": "^0.1.0",
-    "@drupal-canvas/headless-react": "^0.2.0",
+    "@drupal-canvas/headless": "^0.3.0",
+    "@drupal-canvas/headless-next": "^0.1.1",
+    "@drupal-canvas/headless-react": "^0.2.1",
     "class-variance-authority": "^0.7.1",
     "drupal-canvas": "^0.4.3",
     "next": "^16.2.12",
