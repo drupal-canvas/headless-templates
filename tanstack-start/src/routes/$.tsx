@@ -1,7 +1,7 @@
 import CanvasComponentTree from '@drupal-canvas/headless-tanstack-start/CanvasComponentTree'
 import { toTanStackHead } from '@drupal-canvas/headless-tanstack-start/head'
 import { isPageRedirect } from '@drupal-canvas/headless'
-import { Link, createFileRoute, notFound, redirect } from '@tanstack/react-router'
+import { createFileRoute, notFound, redirect } from '@tanstack/react-router'
 
 import { getPageForPath } from '#/server/canvas.functions'
 
@@ -38,9 +38,9 @@ function NotFoundPage() {
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-10">
       <p className="mb-6">
-        <Link to="/" className="text-sm underline">
-          ← All content
-        </Link>
+        <a href="/" className="text-sm underline">
+          ← Back to home
+        </a>
       </p>
       <h1 className="mb-2 text-3xl font-bold">Not found</h1>
       <p className="text-sm text-gray-500">

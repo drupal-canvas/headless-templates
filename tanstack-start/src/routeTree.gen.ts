@@ -9,18 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as ApiDisableDraftRouteImport } from './routes/api/disable-draft'
 import { Route as ApiDraftRouteImport } from './routes/api/draft'
 import { Route as ApiCanvasComponentsRouteImport } from './routes/api/canvas.components'
 import { Route as ApiDraftRenewRouteImport } from './routes/api/draft.renew'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SplatRoute = SplatRouteImport.update({
   id: '/$',
   path: '/$',
@@ -48,7 +42,6 @@ const ApiDraftRenewRoute = ApiDraftRenewRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/api/disable-draft': typeof ApiDisableDraftRoute
   '/api/draft': typeof ApiDraftRouteWithChildren
@@ -56,7 +49,6 @@ export interface FileRoutesByFullPath {
   '/api/draft/renew': typeof ApiDraftRenewRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/api/disable-draft': typeof ApiDisableDraftRoute
   '/api/draft': typeof ApiDraftRouteWithChildren
@@ -65,7 +57,6 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/api/disable-draft': typeof ApiDisableDraftRoute
   '/api/draft': typeof ApiDraftRouteWithChildren
@@ -75,7 +66,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/$'
     | '/api/disable-draft'
     | '/api/draft'
@@ -83,7 +73,6 @@ export interface FileRouteTypes {
     | '/api/draft/renew'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/$'
     | '/api/disable-draft'
     | '/api/draft'
@@ -91,7 +80,6 @@ export interface FileRouteTypes {
     | '/api/draft/renew'
   id:
     | '__root__'
-    | '/'
     | '/$'
     | '/api/disable-draft'
     | '/api/draft'
@@ -100,7 +88,6 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   ApiDisableDraftRoute: typeof ApiDisableDraftRoute
   ApiDraftRoute: typeof ApiDraftRouteWithChildren
@@ -109,13 +96,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/$': {
       id: '/$'
       path: '/$'
@@ -167,7 +147,6 @@ const ApiDraftRouteWithChildren = ApiDraftRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   ApiDisableDraftRoute: ApiDisableDraftRoute,
   ApiDraftRoute: ApiDraftRouteWithChildren,

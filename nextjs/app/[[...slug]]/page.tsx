@@ -11,14 +11,14 @@ import { cache } from 'react';
 export const dynamic = 'force-dynamic';
 
 interface CatchAllPageProps {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug?: string[] }>;
 }
 
 const getPage = cache((path: string) => fetchPage(path));
 
 async function getPath(params: CatchAllPageProps['params']) {
   const { slug } = await params;
-  return `/${slug.map(encodeURIComponent).join('/')}`;
+  return `/${(slug ?? []).map(encodeURIComponent).join('/')}`;
 }
 
 export async function generateMetadata({

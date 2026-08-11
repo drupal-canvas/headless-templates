@@ -16,9 +16,9 @@ const slug = computed(() =>
 const path = computed(
   () => `/${slug.value.split('/').map(encodeURIComponent).join('/')}`,
 );
-const { data: result } = await useFetch<PageResult | null>(
-  () => `/api/page${path.value}`,
-);
+const { data: result } = await useFetch<PageResult | null>('/api/page', {
+  query: { path },
+});
 
 const redirectResult = computed(() =>
   result.value && isPageRedirect(result.value) ? result.value.redirect : null,
@@ -58,7 +58,7 @@ useHead(
   <CanvasComponentTree v-if="page" :tree="page.content" />
   <main v-else class="mx-auto w-full max-w-2xl px-6 py-10">
     <p class="mb-6">
-      <NuxtLink to="/" class="text-sm underline">← All content</NuxtLink>
+      <NuxtLink to="/" class="text-sm underline">← Back to home</NuxtLink>
     </p>
     <h1 class="mb-2 text-3xl font-bold">Not found</h1>
     <p class="text-sm text-gray-500">
