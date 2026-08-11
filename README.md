@@ -3,7 +3,7 @@
 Framework-native starters for decoupled Drupal Canvas frontends. Create a project with Canvas Create:
 
 ```bash
-npx @drupal-canvas/create@latest
+npx @drupal-canvas/create@latest --experimental-headless
 ```
 
 Choose a template interactively, or select one directly:
