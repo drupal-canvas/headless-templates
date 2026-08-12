@@ -20,7 +20,7 @@ export interface CanvasPage {
 }
 
 /**
- * What the homepage's /api/content route answers.
+ * What the /api/content route answers.
  */
 export interface ContentLists {
   canvasPages: CanvasPage[];

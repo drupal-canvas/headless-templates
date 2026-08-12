@@ -29,7 +29,7 @@ interface JsonApiDocument<T> {
 }
 
 /**
- * Fetches the article list for the homepage, via JSON:API. Takes the
+ * Fetches the article list, via JSON:API. Takes the
  * request's `Astro` global: the client is draft-session-aware, and in
  * Astro the session travels with the request context rather than a
  * request-scoped global.
@@ -45,7 +45,7 @@ export async function getArticles(
 }
 
 /**
- * Fetches the Canvas page list for the homepage, via JSON:API.
+ * Fetches the Canvas page list, via JSON:API.
  */
 export async function getCanvasPages(
   context: AstroDraftContext,

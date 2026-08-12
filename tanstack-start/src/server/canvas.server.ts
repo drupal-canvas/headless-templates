@@ -51,7 +51,7 @@ export async function readDraftSessionState(): Promise<DraftSessionState> {
 }
 
 /**
- * The homepage's content lists, via JSON:API. The client is
+ * The Canvas page and article lists, via JSON:API. The client is
  * draft-session-aware and answers working copies while a session is live.
  */
 export async function readContentLists(): Promise<ContentLists> {

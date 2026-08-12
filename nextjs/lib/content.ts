@@ -27,7 +27,7 @@ interface JsonApiDocument<T> {
 }
 
 /**
- * Fetches the article list for the homepage, via JSON:API.
+ * Fetches the article list, via JSON:API.
  */
 export async function getArticles(): Promise<Article[]> {
   const client = await getClient();
@@ -38,7 +38,7 @@ export async function getArticles(): Promise<Article[]> {
 }
 
 /**
- * Fetches the Canvas page list for the homepage, via JSON:API.
+ * Fetches the Canvas page list, via JSON:API.
  */
 export async function getCanvasPages(): Promise<CanvasPage[]> {
   const client = await getClient();
