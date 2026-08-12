@@ -17,8 +17,8 @@
     "check": "npm run lint && npm run type-check"
   },
   "dependencies": {
-    "@drupal-canvas/headless": "^0.3.0",
-    "@drupal-canvas/headless-nuxt": "^0.2.1",
+    "@drupal-canvas/headless": "^0.4.0",
+    "@drupal-canvas/headless-nuxt": "^0.3.0",
     "nuxt": "4.5.1",
     "vue": "3.5.40",
     "vue-router": "5.2.0"
@@ -36,8 +36,8 @@
     "rolldown": "1.1.5"
   },
   "devDependencies": {
-    "@drupal-canvas/cli": "^0.22.0",
-    "@drupal-canvas/eslint-config": "^0.7.0",
+    "@drupal-canvas/cli": "^0.23.0",
+    "@drupal-canvas/eslint-config": "^0.8.0",
     "@nuxt/nitro-server": "4.5.1",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.1.18",
