@@ -1,12 +1,13 @@
+import { trustSystemCertificates } from '@drupal-canvas/headless/node'
 import handler, {
   createServerEntry,
 } from '@tanstack/react-start/server-entry'
-import { trustSystemCertificates } from '@drupal-canvas/headless/node'
 
+// Node.js does not trust system certificates by default; local DDEV HTTPS requires them.
 trustSystemCertificates()
 
 export default createServerEntry({
-  fetch(request) {
-    return handler.fetch(request)
+  fetch(request, options) {
+    return handler.fetch(request, options)
   },
 })
