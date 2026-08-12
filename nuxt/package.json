@@ -17,8 +17,8 @@
     "check": "npm run lint && npm run type-check"
   },
   "dependencies": {
-    "@drupal-canvas/headless": "^0.4.0",
-    "@drupal-canvas/headless-nuxt": "^0.3.0",
+    "@drupal-canvas/headless": "^0.5.0",
+    "@drupal-canvas/headless-nuxt": "^0.4.0",
     "nuxt": "4.5.1",
     "vue": "3.5.40",
     "vue-router": "5.2.0"
