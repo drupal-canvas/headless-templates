@@ -4,6 +4,20 @@
  * file, and routes are part of the client bundle.
  */
 
+export interface DraftSessionState {
+  enabled: boolean
+  tokenExpiresAt: number | null
+  expired: boolean
+  renewUrl: string | null
+  editorOrigin: string | null
+}
+
+/*
+ * Reference code from here down: nothing in the template uses it today.
+ * It is kept to show what a listing page needs — content types plus the
+ * app-side path each item is served at.
+ */
+
 export interface Article {
   id: string
   attributes: {
@@ -28,14 +42,6 @@ export interface CanvasPage {
 export interface ContentLists {
   canvasPages: Array<CanvasPage>
   articles: Array<Article>
-}
-
-export interface DraftSessionState {
-  enabled: boolean
-  tokenExpiresAt: number | null
-  expired: boolean
-  renewUrl: string | null
-  editorOrigin: string | null
 }
 
 /**

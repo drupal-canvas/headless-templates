@@ -1,3 +1,8 @@
+/**
+ * Reference code: nothing in the template uses this module today. It is
+ * kept to show how to list Drupal content (Canvas pages and articles) via
+ * JSON:API and link each item through the catch-all route.
+ */
 import { getClient } from "@drupal-canvas/headless-next";
 
 export interface Article {
