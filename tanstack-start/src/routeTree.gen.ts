@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as ApiDisableDraftRouteImport } from './routes/api/disable-draft'
 import { Route as ApiDraftRouteImport } from './routes/api/draft'
+import { Route as ApiCanvasComponentPreviewRouteImport } from './routes/api/canvas.component-preview'
 import { Route as ApiCanvasComponentsRouteImport } from './routes/api/canvas.components'
 import { Route as ApiDraftRenewRouteImport } from './routes/api/draft.renew'
 
@@ -30,6 +31,12 @@ const ApiDraftRoute = ApiDraftRouteImport.update({
   path: '/api/draft',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCanvasComponentPreviewRoute =
+  ApiCanvasComponentPreviewRouteImport.update({
+    id: '/api/canvas/component-preview',
+    path: '/api/canvas/component-preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCanvasComponentsRoute = ApiCanvasComponentsRouteImport.update({
   id: '/api/canvas/components',
   path: '/api/canvas/components',
@@ -45,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
   '/api/disable-draft': typeof ApiDisableDraftRoute
   '/api/draft': typeof ApiDraftRouteWithChildren
+  '/api/canvas/component-preview': typeof ApiCanvasComponentPreviewRoute
   '/api/canvas/components': typeof ApiCanvasComponentsRoute
   '/api/draft/renew': typeof ApiDraftRenewRoute
 }
@@ -52,6 +60,7 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/api/disable-draft': typeof ApiDisableDraftRoute
   '/api/draft': typeof ApiDraftRouteWithChildren
+  '/api/canvas/component-preview': typeof ApiCanvasComponentPreviewRoute
   '/api/canvas/components': typeof ApiCanvasComponentsRoute
   '/api/draft/renew': typeof ApiDraftRenewRoute
 }
@@ -60,6 +69,7 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/api/disable-draft': typeof ApiDisableDraftRoute
   '/api/draft': typeof ApiDraftRouteWithChildren
+  '/api/canvas/component-preview': typeof ApiCanvasComponentPreviewRoute
   '/api/canvas/components': typeof ApiCanvasComponentsRoute
   '/api/draft/renew': typeof ApiDraftRenewRoute
 }
@@ -69,6 +79,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/api/disable-draft'
     | '/api/draft'
+    | '/api/canvas/component-preview'
     | '/api/canvas/components'
     | '/api/draft/renew'
   fileRoutesByTo: FileRoutesByTo
@@ -76,6 +87,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/api/disable-draft'
     | '/api/draft'
+    | '/api/canvas/component-preview'
     | '/api/canvas/components'
     | '/api/draft/renew'
   id:
@@ -83,6 +95,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/api/disable-draft'
     | '/api/draft'
+    | '/api/canvas/component-preview'
     | '/api/canvas/components'
     | '/api/draft/renew'
   fileRoutesById: FileRoutesById
@@ -91,6 +104,7 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   ApiDisableDraftRoute: typeof ApiDisableDraftRoute
   ApiDraftRoute: typeof ApiDraftRouteWithChildren
+  ApiCanvasComponentPreviewRoute: typeof ApiCanvasComponentPreviewRoute
   ApiCanvasComponentsRoute: typeof ApiCanvasComponentsRoute
 }
 
@@ -115,6 +129,13 @@ declare module '@tanstack/react-router' {
       path: '/api/draft'
       fullPath: '/api/draft'
       preLoaderRoute: typeof ApiDraftRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/canvas/component-preview': {
+      id: '/api/canvas/component-preview'
+      path: '/api/canvas/component-preview'
+      fullPath: '/api/canvas/component-preview'
+      preLoaderRoute: typeof ApiCanvasComponentPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/canvas/components': {
@@ -150,6 +171,7 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   ApiDisableDraftRoute: ApiDisableDraftRoute,
   ApiDraftRoute: ApiDraftRouteWithChildren,
+  ApiCanvasComponentPreviewRoute: ApiCanvasComponentPreviewRoute,
   ApiCanvasComponentsRoute: ApiCanvasComponentsRoute,
 }
 export const routeTree = rootRouteImport

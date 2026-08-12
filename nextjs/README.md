@@ -14,7 +14,7 @@ The dev server runs at <http://localhost:3000>. After enabling the Canvas Headle
 
 - **Components:** `components` contains the React components exposed to Canvas.
 - **Styles:** `app/globals.css` contains the global Tailwind styles.
-- **Canvas integration:** `withCanvas()` generates the component registry, while the routes under `app/api` handle draft sessions and component metadata. The catch-all route renders Drupal content through `CanvasComponentTree`.
+- **Canvas integration:** `withCanvas()` generates the component registry, while the routes under `app/api` handle draft sessions, component metadata, and component-library thumbnails. The catch-all route renders Drupal content through `CanvasComponentTree`.
 
 ## Commands
 
