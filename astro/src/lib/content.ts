@@ -7,6 +7,11 @@ import { getClient } from '@drupal-canvas/headless-astro';
 
 import type { AstroDraftContext } from '@drupal-canvas/headless-astro';
 
+import { trustSystemCertificates } from '@drupal-canvas/headless/node';
+
+// Node.js does not trust system certificates by default; local DDEV HTTPS requires them.
+trustSystemCertificates();
+
 export interface Article {
   id: string;
   attributes: {

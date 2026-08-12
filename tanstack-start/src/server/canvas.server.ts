@@ -20,6 +20,11 @@ import type {
   DraftSessionState,
 } from '#/lib/content'
 
+import { trustSystemCertificates } from '@drupal-canvas/headless/node'
+
+// Node.js does not trust system certificates by default; local DDEV HTTPS requires them.
+trustSystemCertificates()
+
 interface JsonApiDocument<T> {
   data?: T | null
   errors?: Array<{ status?: string; detail?: string }>

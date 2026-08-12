@@ -6,6 +6,11 @@ import Layout from '../layouts/Layout.astro';
 
 import type { PageHead } from '@drupal-canvas/headless-astro';
 
+import { trustSystemCertificates } from '@drupal-canvas/headless/node';
+
+// Node.js does not trust system certificates by default; local DDEV HTTPS requires them.
+trustSystemCertificates();
+
 type AstroHead = Omit<PageHead, 'title'> & { title?: string };
 
 const { slug } = Astro.params;
