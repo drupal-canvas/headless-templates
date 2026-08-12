@@ -1,3 +1,8 @@
+/**
+ * Reference code: only the reference /api/content route uses these types
+ * and helpers today. They are kept to show what a listing page needs —
+ * content types plus the app-side path each item is served at.
+ */
 export interface Article {
   id: string;
   attributes: {
@@ -20,7 +25,7 @@ export interface CanvasPage {
 }
 
 /**
- * What the homepage's /api/content route answers.
+ * What the /api/content route answers.
  */
 export interface ContentLists {
   canvasPages: CanvasPage[];

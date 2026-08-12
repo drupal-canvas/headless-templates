@@ -51,7 +51,11 @@ export async function readDraftSessionState(): Promise<DraftSessionState> {
 }
 
 /**
- * The homepage's content lists, via JSON:API. The client is
+ * Reference code: nothing in the template calls this today. It is kept,
+ * with the getContentLists server function, to show how to list Drupal
+ * content for a listing page.
+ *
+ * The Canvas page and article lists, via JSON:API. The client is
  * draft-session-aware and answers working copies while a session is live.
  */
 export async function readContentLists(): Promise<ContentLists> {

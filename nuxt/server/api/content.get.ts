@@ -8,7 +8,10 @@ interface JsonApiDocument<T> {
 }
 
 /**
- * The homepage's content lists, via JSON:API. Fetched in a server route
+ * Reference code: nothing in the template calls this route today. It is
+ * kept to show how to list Drupal content for a listing page.
+ *
+ * The Canvas page and article lists, via JSON:API. Fetched in a server route
  * because the draft session lives in httpOnly request cookies: the client
  * is draft-session-aware and answers working copies while a session is
  * live.

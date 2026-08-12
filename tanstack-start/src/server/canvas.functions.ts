@@ -17,6 +17,10 @@ export const getDraftSessionState = createServerFn().handler(() =>
   readDraftSessionState(),
 )
 
+/**
+ * Reference code: nothing in the template calls this today — see
+ * readContentLists() in canvas.server.ts.
+ */
 export const getContentLists = createServerFn().handler(() =>
   readContentLists(),
 )
