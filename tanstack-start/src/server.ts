@@ -7,7 +7,7 @@ import handler, {
 trustSystemCertificates()
 
 export default createServerEntry({
-  fetch(request, options) {
-    return handler.fetch(request, options)
+  fetch(request) {
+    return handler.fetch(request)
   },
 })
