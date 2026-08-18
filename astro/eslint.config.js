@@ -5,12 +5,6 @@ export default [
   ...drupalCanvasRecommended,
   ...eslintPluginAstro.configs.recommended,
   {
-    rules: {
-      'drupal-canvas/component-exports': 'off',
-      'drupal-canvas/component-imports': 'off',
-    },
-  },
-  {
     ignores: ['.astro/**', '.canvas/**', 'dist/**', 'node_modules/**'],
   },
 ];

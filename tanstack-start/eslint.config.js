@@ -16,12 +16,6 @@ export default [
   },
   ...drupalCanvasRequired,
   {
-    rules: {
-      'drupal-canvas/component-exports': 'off',
-      'drupal-canvas/component-imports': 'off',
-    },
-  },
-  {
     ignores: [
       '.canvas/**',
       '.output/**',

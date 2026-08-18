@@ -29,8 +29,8 @@
     "sharp": "^0.35.3"
   },
   "devDependencies": {
-    "@drupal-canvas/cli": "^0.23.0",
-    "@drupal-canvas/eslint-config": "^0.8.0",
+    "@drupal-canvas/cli": "^0.23.1",
+    "@drupal-canvas/eslint-config": "^0.9.0",
     "@drupal-canvas/workbench": "^0.10.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.20",

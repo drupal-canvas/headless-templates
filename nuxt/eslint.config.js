@@ -26,12 +26,6 @@ export default [
     },
   },
   {
-    rules: {
-      'drupal-canvas/component-exports': 'off',
-      'drupal-canvas/component-imports': 'off',
-    },
-  },
-  {
     ignores: ['.canvas/**', '.nuxt/**', '.output/**', 'dist/**', 'node_modules/**'],
   },
 ];

@@ -13,12 +13,6 @@ export default defineConfig([
     },
   },
   ...drupalCanvasRequired,
-  {
-    rules: {
-      'drupal-canvas/component-exports': 'off',
-      'drupal-canvas/component-imports': 'off',
-    },
-  },
   globalIgnores([
     '.canvas/**',
     '.next/**',
