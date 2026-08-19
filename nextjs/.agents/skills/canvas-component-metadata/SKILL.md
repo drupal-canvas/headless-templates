@@ -1,0 +1,444 @@
+---
+name: canvas-component-metadata
+description:
+  Define valid component.yml metadata for Canvas components, including props,
+  slots, and enums. Use when (1) Creating a new component, (2) Adding or
+  modifying props, (3) Troubleshooting "not a valid choice" or prop type errors,
+  (4) Mapping enums to CVA variants.
+---
+
+## Project type
+
+Before applying this skill, check `package.json` for a dependency named
+`@drupal-canvas/headless` or starting with `@drupal-canvas/headless-`. If one is
+present, this is a Canvas Headless codebase — read
+[`canvas-headless`](../canvas-headless/SKILL.md) first; it overrides the
+React-specific guidance below. The `component.yml` schema in this skill is
+identical in headless projects. If no such dependency is present, this is a
+Canvas-rendered React codebase: components are React (`index.jsx`/`.tsx`) and
+everything in this skill applies as written. These are the only two project
+types.
+
+## File structure
+
+Every `component.yml` must include these top-level keys:
+
+```yaml
+name: Component Name # Human-readable display name
+machineName: component-name # Machine name in kebab-case
+status: true # Whether the component is enabled
+required: [] # Array of required prop names
+props:
+  properties:
+    # ... prop definitions
+slots: [] # Use [] only when there are no slots; otherwise use an object map
+```
+
+## Props
+
+### Requirements
+
+Every prop definition must include a `title` for the UI label. The `examples`
+array is required for required props and recommended for all others. Only the
+first example value is used by Drupal Canvas.
+
+If a prop is listed in `required`, do not add a fallback/default value for that
+prop in the component implementation. Required Canvas props should be provided
+by metadata/editor input rather than silent implementation defaults.
+
+```yaml
+props:
+  properties:
+    heading:
+      title: Heading
+      type: string
+      examples:
+        - Enter a heading...
+```
+
+```jsx
+// Correct: required prop has no fallback default
+const Hero = ({ heading }) => <h1>{heading}</h1>;
+
+// Wrong: required prop fallback masks missing required data
+const Hero = ({ heading = 'Default heading' }) => <h1>{heading}</h1>;
+```
+
+**Prop IDs must be camelCase versions of their titles.**
+
+The prop ID (the key under `properties`) must be the camelCase conversion of the
+`title` value.
+
+Only include user-facing, Canvas-editable props in `component.yml`.
+Implementation-only props must stay in the implementation and must not be added
+to metadata.
+
+**Never include `className` in `component.yml`.** Treat it as a composition prop
+for developers, not a Canvas editor control.
+
+```yaml
+# Correct
+props:
+  properties:
+    buttonText:           # camelCase of "Button Text"
+      title: Button Text
+      type: string
+    backgroundColor:      # camelCase of "Background Color"
+      title: Background Color
+      type: string
+    isVisible:            # camelCase of "Is Visible"
+      title: Is Visible
+      type: boolean
+
+# Wrong
+props:
+  properties:
+    btn_text:             # should be "buttonText" for title "Button Text"
+      title: Button Text
+    bgColor:              # should be "backgroundColor" for title "Background Color"
+      title: Background Color
+```
+
+### Prop types
+
+#### Text
+
+Basic text input. Stored as a string value.
+
+```yaml
+type: string
+examples:
+  - Hello, world!
+```
+
+#### Formatted text
+
+Rich text content with HTML formatting support, displayed in a block context.
+
+```yaml
+type: string
+contentMediaType: text/html
+x-formatting-context: block
+examples:
+  - <p>This is <strong>formatted</strong> text with HTML.</p>
+```
+
+#### Link
+
+URL or URI reference for links to internal or external resources.
+
+```yaml
+type: string
+format: uri-reference
+examples:
+  - /about/contact
+```
+
+**Note:** The format can be either `uri` (accepts only absolute URLs) or
+`uri-reference` (accepts both absolute and relative URLs).
+
+**IMPORTANT: Use proper path examples for URL props.** Do not use `#` as an
+example value for `uri-reference` props—it can cause validation failures during
+push. Always use realistic path-like examples:
+
+```yaml
+# Correct
+examples:
+  - /resources
+  - /about/team
+  - https://example.com/page
+
+# Wrong
+examples:
+  - "#"
+  - ""
+```
+
+#### Image
+
+Reference to an image object with metadata like alt text, dimensions, and file
+URL. Use this shape for any prop that represents one image. Do not model a
+single image as separate props like `imageUrl`, `imageAlt`, `imageWidth`, or
+`imageHeight`.
+
+Use semantic prop IDs such as `image`, `backgroundImage`, `logoImage`, or
+`cardImage`, but keep the value shape identical: `type: object` plus the Canvas
+image schema ref.
+
+```yaml
+type: object
+$ref: json-schema-definitions://canvas.module/image
+examples:
+  - src: >-
+      https://images.unsplash.com/photo-1484959014842-cd1d967a39cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80
+    alt: Woman playing the violin
+    width: 1770
+    height: 1180
+```
+
+Model the prop as one image object, not separate URL/alt fields:
+
+```yaml
+# Correct
+props:
+  properties:
+    image:
+      title: Image
+      type: object
+      $ref: json-schema-definitions://canvas.module/image
+      examples:
+        - src: https://example.com/photo.webp
+          alt: Product hero image
+
+# Wrong
+props:
+  properties:
+    imageUrl:
+      title: Image URL
+      type: string
+      format: uri-reference
+    imageAlt:
+      title: Image Alt
+      type: string
+```
+
+#### Content entity reference
+
+Reference to a selected Drupal content entity as a structured object. Use this
+when the component needs the editor to choose an entity and the JSX should
+receive selected entity fields together on one prop.
+
+```yaml
+props:
+  properties:
+    featuredArticle:
+      title: Featured Article
+      type: object
+      $ref: json-schema-definitions://canvas.module/content-entity-reference
+      x-allowed-entity-type-id: node
+      x-allowed-bundle: article
+```
+
+Content entity reference props must be optional: do not list them in `required`.
+
+Every content entity reference prop must include:
+
+- `x-allowed-entity-type-id`: the Drupal entity type, such as `node`
+- `x-allowed-bundle`: the Drupal bundle, such as `article`
+
+Do not add `examples` for content entity reference props. Preview values are
+resolved from `dataDependencies.entityFields`.
+
+Add `dataDependencies.entityFields.<propName>` with one or more expressions from
+`.agents/drupal-canvas/content-entity-reference-expressions.json`.
+
+If `.agents/drupal-canvas/content-entity-reference-expressions.json` is missing,
+stale, or does not include the needed entity fields, run
+`npx canvas agents-context cer-expressions` to refresh only content entity
+reference expressions from the configured Canvas site.
+
+```yaml
+dataDependencies:
+  entityFields:
+    featuredArticle:
+      - ℹ︎␜entity:node:article␝title␞␟value
+      - ℹ︎␜entity:node:article␝path␞␟alias
+```
+
+All expressions for one content entity reference prop must target the same
+entity type and bundle. Do not infer the final developer-facing object shape
+from expression names alone. After the component metadata exists locally, run
+`npx canvas agents-context cer-preview <component>` to inspect the actual
+resolved prop shape that JSX should consume. Reference expressions can create
+nested objects and include metadata keys such as `__type`.
+
+#### Video
+
+Reference to a video object with metadata like dimensions and file URL. Only the
+file URL is required to exist, all other metadata is always optional.
+
+```yaml
+type: object
+$ref: json-schema-definitions://canvas.module/video
+examples:
+  - src: https://media.istockphoto.com/id/1340051874/video/aerial-top-down-view-of-a-container-cargo-ship.mp4?s=mp4-640x640-is&k=20&c=5qPpYI7TOJiOYzKq9V2myBvUno6Fq2XM3ITPGFE8Cd8=
+    poster: https://example.com/600x400.png
+```
+
+#### Boolean
+
+True or false value.
+
+```yaml
+type: boolean
+examples:
+  - false
+```
+
+#### Integer
+
+Whole number value without decimal places.
+
+```yaml
+type: integer
+examples:
+  - 42
+```
+
+#### Number
+
+Numeric value that can include decimal places.
+
+```yaml
+type: number
+examples:
+  - 3.14
+```
+
+#### List: text
+
+A predefined list of text options that the user can select from.
+
+```yaml
+type: string
+enum:
+  - option1
+  - option2
+  - option3
+meta:enum:
+  option1: Option 1
+  option2: Option 2
+  option3: Option 3
+examples:
+  - option1
+```
+
+#### List: integer
+
+A predefined list of integer options that the user can select from.
+
+```yaml
+type: integer
+enum:
+  - 1
+  - 2
+  - 3
+meta:enum:
+  1: Option 1
+  2: Option 2
+  3: Option 3
+examples:
+  - 1
+```
+
+## Enums
+
+Enum values must use lowercase, machine-friendly identifiers. Use `meta:enum` to
+provide human-readable display labels for the UI.
+
+**Note:** Enum values cannot contain dots.
+
+```yaml
+# Correct
+enum:
+  - left_aligned
+  - center_aligned
+meta:enum:
+  left_aligned: Left aligned
+  center_aligned: Center aligned
+examples:
+  - left_aligned
+
+# Wrong
+enum:
+  - Left aligned
+  - Center aligned
+```
+
+The `examples` value must be the enum value, not the display label.
+
+### Enum values must match implementation variant keys
+
+When the implementation maps enum props to styles through a variant map —
+class-variance-authority (CVA) or a plain variant object — the variant keys must
+exactly match the enum values defined in `component.yml`.
+
+```jsx
+// component.yml defines: enum: [left_aligned, center_aligned]
+// CVA variants must match:
+const variants = cva('base-classes', {
+  variants: {
+    layout: {
+      left_aligned: 'text-left', // matches enum value
+      center_aligned: 'text-center', // matches enum value
+    },
+  },
+});
+```
+
+## Slots
+
+Slots allow other components to be embedded within a component. How the
+implementation consumes a slot depends on the framework:
+
+- **React:** each slot is received as a named prop that matches the slot key.
+- **Vue and Astro (headless projects):** each slot is rendered as a named slot,
+  `<slot name="slotKey" />`.
+
+This section is the slot schema source of truth. Other skills should reference
+these rules instead of redefining slot schema details.
+
+Before creating slots, confirm with the user unless the use case is clearly
+compositional (for example, rich nested content, or repeatable embedded
+components). For simple text-like values, prefer a prop.
+
+**Important:** Do not map Canvas slots to the `children` prop by default. If the
+slot key is `content`, consume it as `content` in JSX.
+
+Using a slot key named `children` is technically possible, but it is not
+recommended because slot naming often flows into user-facing Canvas labels.
+Prefer explicit slot keys such as `content`, `media`, or `actions`.
+
+`slots` must be either:
+
+1. An object map keyed by slot name (`content`, `sidebar`, etc.)
+2. `[]` when the component has no slots
+
+```yaml
+slots:
+  content:
+    title: Content
+  buttons:
+    title: Buttons
+```
+
+In a React component, slots are destructured as named props and rendered
+directly:
+
+```jsx
+const Section = ({ width, content }) => {
+  return <div className={sectionVariants({ width })}>{content}</div>;
+};
+```
+
+```jsx
+// Wrong when the slot key is `content`: this does not consume the named slot.
+const Section = ({ children }) => {
+  return <div>{children}</div>;
+};
+```
+
+Use `slots: []` only when the component has no slots:
+
+```yaml
+slots: []
+```
+
+Do not use arrays of slot objects:
+
+```yaml
+# Wrong
+slots:
+  - name: content
+    title: Content
+```

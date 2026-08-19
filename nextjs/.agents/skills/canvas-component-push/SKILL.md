@@ -1,0 +1,194 @@
+---
+name: canvas-component-push
+description:
+  Push validated Canvas component changes to Drupal Canvas and recover from
+  common push failures. Use only when the user explicitly requests a
+  push/publish/sync action. Handles dependency-related push failures that
+  require retry.
+---
+
+## Project type
+
+Before applying this skill, check `package.json` for a dependency named
+`@drupal-canvas/headless` or starting with `@drupal-canvas/headless-`. If one is
+present, this is a Canvas Headless codebase — read
+[`canvas-headless`](../canvas-headless/SKILL.md) first. Push behaves differently
+there:
+
+- The CLI detects the headless SDK automatically and pushes every component as
+  `type: external` — metadata only, no component code. This is expected; the CLI
+  logs it.
+- External components are created and updated by push but never deleted, and
+  `canvas pull` excludes them.
+- The dependency-retry guidance below does not apply to external components: no
+  imports are pushed, so dependency-order failures cannot occur.
+
+The setup gate, auth handling, and connection-failure rules below apply
+unchanged. If no such dependency is present, this is a Canvas-rendered React
+codebase: components are React (`index.jsx`/`.tsx`) and everything in this skill
+applies as written. These are the only two project types.
+
+## Activation guard
+
+Run this skill only when the user explicitly asks to push, publish, sync, or
+upload components to Canvas.
+
+Do not run this skill automatically after component edits, validation, or task
+completion.
+
+Before pushing, confirm the user has Drupal Canvas CLI installed and configured
+for their target site.
+
+### Setup gate
+
+Before running any push command:
+
+1. Check that Canvas CLI auth is configured from a supported source. For local
+   project work, prefer a `.env` file in the project root. The CLI also reads
+   shell environment variables, `~/.canvasrc`, and interactive-login tokens
+   stored in `~/.config/drupal-canvas/oauth.json` (written by
+   `npx canvas login`).
+2. Verify `CANVAS_SITE_URL` is set.
+3. **Primary auth (prefer env-based):** configure at least one of:
+   - **`CANVAS_ACCESS_TOKEN`** — set and non-empty in `.env` / the shell
+     (simplest for many setups), or
+   - **`CANVAS_CLIENT_ID` and `CANVAS_CLIENT_SECRET`** — both set (typical for
+     CI and service-style access).
+4. **Fallback when tokens are not configured:** if `CANVAS_SITE_URL` is set but
+   **neither** an access token **nor** client credentials appear in `.env` / the
+   shell, use **`npx canvas login`** (browser-based Canvas sign-in). Tokens are
+   stored under `~/.config/drupal-canvas/oauth.json` (keyed by site URL). See
+   [interactive login with Canvas Login](https://git.drupalcode.org/project/canvas/-/tree/1.x/modules/canvas_oauth#23-interactive-login-with-canvas-login).
+   Do not treat auth as missing until this fallback has been tried or ruled out.
+5. If `CANVAS_ACCESS_TOKEN` is set, treat it as the active auth mode. It skips
+   the OAuth client credentials flow entirely, and `CANVAS_CLIENT_ID`,
+   `CANVAS_CLIENT_SECRET`, and `CANVAS_SCOPE` are ignored.
+6. If required setup is still missing after the checks above, **stop** and ask
+   the user to complete setup first.
+7. **Do not guess setup steps**. Point the user to the official docs:
+   - Drupal Canvas OAuth module setup:
+     <https://git.drupalcode.org/project/canvas/-/tree/1.x/modules/canvas_oauth#2-setup>
+   - Drupal Canvas CLI package/docs:
+     <https://www.npmjs.com/package/@drupal-canvas/cli>
+8. Continue only after the user confirms setup is complete.
+
+## Run push
+
+When component work is complete and validated, ask the user if they would like
+to push the current Canvas changes to Canvas. `canvas push --yes` will push all
+current changes; it does not support selecting specific components. If there are
+unrelated or unvalidated Canvas changes in the working tree, stop and ask the
+user how they want to proceed. Make sure to use the right package manager. For
+example, if using npm, run the following command:
+
+```bash
+npx canvas push --yes
+```
+
+If pages are included and they contain image props with external URLs, the first
+push may fail with an error like "Some pages contain media that references
+external URLs". This is expected until media is reconciled.
+
+Supported authored page image sources:
+
+- External `http://` or `https://` URLs
+- `data:image/...` URLs
+
+Supported image formats for reconciliation: `.jpg`, `.png`, `.gif`, `.webp`, and
+`.avif`.
+
+Local filesystem image upload through the CLI is not supported.
+
+### Media reconciliation for pages
+
+When working with pages that include image props:
+
+1. Run the page push, for example:
+
+   ```bash
+   npx canvas push --yes --include-pages
+   ```
+
+2. If Canvas reports external media references, run:
+
+   ```bash
+   npx canvas reconcile-media
+   ```
+
+3. Re-run the page push:
+
+   ```bash
+   npx canvas push --yes --include-pages
+   ```
+
+4. Pull pages back down to sync resolved inputs locally:
+
+   ```bash
+   npx canvas pull --include-pages
+   ```
+
+After reconciliation/pull, page JSON may be updated so that:
+
+- The image prop keeps the same object shape but now includes resolved `src`,
+  `alt`, `width`, and `height`
+- A `_provenance` object may be added with values such as `target_id` and
+  `source_url`
+
+Preserve resolved image props and `_provenance` during later edits unless you
+are intentionally replacing the media.
+
+## Handling push failures
+
+Default behavior: **always retry failed pushes** unless the error is clearly a
+connection/setup failure.
+
+Retry pushes when the failure indicates the Canvas app connection is already
+working (for example, dependency/order-related component errors). Do **not**
+retry connection/setup failures.
+
+### Connection/setup failures: Stop, do not retry
+
+If push fails with authentication, authorization, or network/connection errors,
+stop and ask the user to complete or verify setup first. This includes errors
+like invalid credentials, unauthorized/forbidden responses, DNS issues,
+connection refused, host unreachable, request timeout before reaching Canvas, or
+TLS/SSL handshake/certificate failures.
+
+If `CANVAS_ACCESS_TOKEN` is the active auth mode, treat token-related failures
+as setup failures. Do not retry on errors like an invalid or expired token, or
+401 responses that indicate the token is not accepted.
+
+Point the user to the official setup docs:
+
+- Drupal Canvas OAuth module setup:
+  <https://git.drupalcode.org/project/canvas/-/tree/1.x/modules/canvas_oauth#2-setup>
+- Drupal Canvas CLI package/docs:
+  <https://www.npmjs.com/package/@drupal-canvas/cli>
+
+Ask them to verify `CANVAS_SITE_URL` and the active token or client credential
+values from whichever config source the CLI is using first (for example: shell
+environment variables, `.env`, `~/.canvasrc`, or interactive-login
+config/session); if those are unset or invalid, have them run
+**`npx canvas login`** as a fallback (or again, to refresh interactive tokens).
+Retry the push only after they confirm setup updates are complete.
+
+### Dependency-related failures
+
+When pushing multiple new components where one component depends on another
+(e.g., `hero` imports `heading`), the push may fail with a message indicating
+that a component doesn't exist. This happens when a component that includes
+another gets pushed before its dependency.
+
+**This is expected behavior.** Simply retry the push command. On subsequent
+attempts, the dependencies that were successfully pushed in the previous run
+will already exist, allowing the dependent components to push successfully.
+
+Example scenario:
+
+1. First push attempt: `hero` fails because `heading` doesn't exist yet, but
+   `heading` pushes successfully.
+2. Second push attempt: `hero` now succeeds because `heading` exists.
+
+If pushes continue to fail after multiple retries, check that all required
+dependency components are part of the current local changes or already exist in
+Canvas.
