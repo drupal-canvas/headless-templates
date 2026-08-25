@@ -13,7 +13,10 @@ const path = `/${(slug ?? '')
   .split('/')
   .map(encodeURIComponent)
   .join('/')}`;
-const result = await fetchPage(Astro, path);
+const viewMode = Astro.url.searchParams.get('viewMode') ?? undefined;
+const result = await fetchPage(Astro, path, {
+  ...(viewMode && { viewMode }),
+});
 
 if (result && isPageRedirect(result)) {
   return Astro.redirect(result.redirect.url, result.redirect.statusCode);

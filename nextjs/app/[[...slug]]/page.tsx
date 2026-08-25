@@ -12,9 +12,14 @@ export const dynamic = 'force-dynamic';
 
 interface CatchAllPageProps {
   params: Promise<{ slug?: string[] }>;
+  searchParams: Promise<{ viewMode?: string | string[] }>;
 }
 
-const getPage = cache((path: string) => fetchPage(path));
+const getPage = cache((path: string, viewMode?: string) =>
+  fetchPage(path, {
+    ...(viewMode ? { viewMode } : {}),
+  }),
+);
 
 async function getPath(params: CatchAllPageProps['params']) {
   const { slug } = await params;
@@ -23,13 +28,21 @@ async function getPath(params: CatchAllPageProps['params']) {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: CatchAllPageProps): Promise<Metadata> {
-  const page = await getPage(await getPath(params));
+  const rawViewMode = (await searchParams).viewMode;
+  const viewMode = typeof rawViewMode === 'string' ? rawViewMode : undefined;
+  const page = await getPage(await getPath(params), viewMode);
   return page && !isPageRedirect(page) ? toNextMetadata(page.head) : {};
 }
 
-export default async function CatchAllPage({ params }: CatchAllPageProps) {
-  const page = await getPage(await getPath(params));
+export default async function CatchAllPage({
+  params,
+  searchParams,
+}: CatchAllPageProps) {
+  const rawViewMode = (await searchParams).viewMode;
+  const viewMode = typeof rawViewMode === 'string' ? rawViewMode : undefined;
+  const page = await getPage(await getPath(params), viewMode);
 
   if (!page) {
     notFound();

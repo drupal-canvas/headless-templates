@@ -11,6 +11,7 @@ import {
   readContentLists,
   readDraftSessionState,
   readPageForPath,
+  readPageForPathWithViewMode,
 } from '#/server/canvas.server'
 
 export const getDraftSessionState = createServerFn().handler(() =>
@@ -28,3 +29,7 @@ export const getContentLists = createServerFn().handler(() =>
 export const getPageForPath = createServerFn()
   .validator((path: string) => path)
   .handler(({ data }) => readPageForPath(data))
+
+export const getPageForPathWithViewMode = createServerFn()
+  .validator((data: { path: string; viewMode?: string }) => data)
+  .handler(({ data }) => readPageForPathWithViewMode(data.path, data.viewMode))

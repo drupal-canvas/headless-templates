@@ -81,3 +81,12 @@ export async function readContentLists(): Promise<ContentLists> {
 export function readPageForPath(path: string): Promise<PageResult | null> {
   return fetchPage(path)
 }
+
+export function readPageForPathWithViewMode(
+  path: string,
+  viewMode?: string,
+): Promise<PageResult | null> {
+  return fetchPage(path, {
+    ...(viewMode ? { viewMode } : {}),
+  })
+}

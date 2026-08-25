@@ -16,8 +16,12 @@ const slug = computed(() =>
 const path = computed(
   () => `/${slug.value.split('/').map(encodeURIComponent).join('/')}`,
 );
+const viewMode = computed(() => {
+  const value = route.query.viewMode;
+  return typeof value === 'string' && value !== '' ? value : undefined;
+});
 const { data: result } = await useFetch<PageResult | null>('/api/page', {
-  query: { path },
+  query: { path, viewMode },
 });
 
 const redirectResult = computed(() =>

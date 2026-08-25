@@ -8,14 +8,16 @@ import { fetchPage } from '@drupal-canvas/headless-nuxt/server';
  * null body so the page can render its own not-found state.
  */
 export default defineEventHandler(async (event) => {
-  const path = getQuery(event).path;
+  const { path, viewMode } = getQuery(event);
 
   if (typeof path !== 'string' || !path.startsWith('/')) {
     setResponseStatus(event, 400);
     return null;
   }
 
-  const page = await fetchPage(event, path);
+  const page = await fetchPage(event, path, {
+    ...(typeof viewMode === 'string' && viewMode !== '' && { viewMode }),
+  });
 
   if (!page) {
     setResponseStatus(event, 404);
