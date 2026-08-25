@@ -78,11 +78,7 @@ export async function readContentLists(): Promise<ContentLists> {
  * Resolves a Drupal path through Drupal's routing (the SDK's fetchPage()),
  * carrying the live draft session's bearer token when there is one.
  */
-export function readPageForPath(path: string): Promise<PageResult | null> {
-  return fetchPage(path)
-}
-
-export function readPageForPathWithViewMode(
+export function readPageForPath(
   path: string,
   viewMode?: string,
 ): Promise<PageResult | null> {

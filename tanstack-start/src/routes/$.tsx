@@ -3,7 +3,7 @@ import { toTanStackHead } from '@drupal-canvas/headless-tanstack-start/head'
 import { isPageRedirect } from '@drupal-canvas/headless'
 import { createFileRoute, notFound, redirect } from '@tanstack/react-router'
 
-import { getPageForPathWithViewMode } from '#/server/canvas.functions'
+import { getPageForPath } from '#/server/canvas.functions'
 
 export const Route = createFileRoute('/$')({
   loader: async ({ params, location }) => {
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/$')({
     const viewMode = location.search
       ? new URLSearchParams(location.search).get('viewMode') ?? undefined
       : undefined
-    const result = await getPageForPathWithViewMode({
+    const result = await getPageForPath({
       data: { path, viewMode },
     })
     if (!result) {
