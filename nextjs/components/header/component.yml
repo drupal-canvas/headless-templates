@@ -3,7 +3,7 @@ machineName: header
 status: true
 required: []
 props:
-  properties: []
+  properties: {}
 slots:
   logo:
     title: Logo
