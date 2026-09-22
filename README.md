@@ -16,4 +16,4 @@ The available templates are Astro, Next.js, Nuxt, and TanStack Start. Each gener
 
 Canvas Workbench is included in the React templates (Next.js and TanStack Start).
 
-An [Angular 22 template](angular/README.md), with an independently tested Angular 21 configuration, is also under development. It includes the same 18 components and uses the Angular Canvas adapter without Workbench. Angular is registered in Canvas Create's experimental registry, but public installation remains blocked on the unpublished adapter; see its README for release blockers and local validation.
+An [Angular 22 template](angular/README.md), with an independently tested Angular 21 configuration, is also under development. It includes the same 18 components and uses the Angular Canvas adapter without Workbench. Angular is registered in Canvas Create's experimental registry. CI publishes the adapter after merge; public installation and a registry-resolved lockfile follow that release. Local validation and demos use the immutable packed artifact and do not require publication; see the template README for details.

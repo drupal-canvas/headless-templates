@@ -4,7 +4,7 @@ Standalone Angular 22 frontend for Drupal Canvas, with request-time SSR, Tailwin
 
 ## Release status
 
-**Not yet installable from the public registry.** `@drupal-canvas/headless-angular` is unpublished. The `0.0.0` dependency is an explicit prerelease placeholder, not a released starter dependency. A release version and registry-resolved lockfile are required before distribution. Canvas now registers Angular in its experimental Create registry; the registry is owned by Canvas, not this template. Public installation remains gated on the adapter release.
+**Not yet installable from the public registry.** `@drupal-canvas/headless-angular` is unpublished. The `0.0.0` dependency is an explicit prerelease placeholder, not a released starter dependency. A release version and registry-resolved lockfile are required before distribution. Canvas now registers Angular in its experimental Create registry; the registry is owned by Canvas, not this template. CI publishes the package automatically after merge; no manual publication is needed or authorized. Public installation awaits that release, but publication is **not a demo blocker**: local validation and the demo use the immutable packed artifact. Updating the dependency and generating a registry-resolved lockfile are post-release follow-ups.
 
 Final public npm-bin validation uses the same independently copied, Angular-21-partially-compiled adapter tarball in temporary Angular 21 and 22 projects. No local tarball dependency or absolute lockfile resolution belongs in this template. See [validation](tests/README.md) for the evidence boundary and current blockers.
 
