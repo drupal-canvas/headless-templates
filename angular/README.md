@@ -4,9 +4,9 @@ Standalone Angular 22 frontend for Drupal Canvas, with request-time SSR, Tailwin
 
 ## Release status
 
-**Not yet installable from the public registry.** `@drupal-canvas/headless-angular` is unpublished. The `0.0.0` dependency is an explicit prerelease placeholder, not a released starter dependency. A release version and registry-resolved lockfile are required before distribution. Canvas Create's Angular registry entry is owned by Canvas and is not added here; do not assume `--template angular` is available.
+**Not yet installable from the public registry.** `@drupal-canvas/headless-angular` is unpublished. The `0.0.0` dependency is an explicit prerelease placeholder, not a released starter dependency. A release version and registry-resolved lockfile are required before distribution. Canvas now registers Angular in its experimental Create registry; the registry is owned by Canvas, not this template. Public installation remains gated on the adapter release.
 
-Initial validation uses an independently copied, Angular-21-partially-compiled adapter tarball in temporary Angular 21 and 22 projects. No local tarball dependency or absolute lockfile resolution belongs in this template. See [validation](tests/README.md) for the evidence boundary and current blockers.
+Final public npm-bin validation uses the same independently copied, Angular-21-partially-compiled adapter tarball in temporary Angular 21 and 22 projects. No local tarball dependency or absolute lockfile resolution belongs in this template. See [validation](tests/README.md) for the evidence boundary and current blockers.
 
 ## Setup (after the adapter release)
 
@@ -49,8 +49,23 @@ The **same adapter artifact** is independently consumed by both configurations:
 To select Angular 21 after the adapter is released:
 
 ```sh
-npm install --save-exact @angular/common@21.2.23 @angular/compiler@21.2.23 @angular/core@21.2.23 @angular/platform-browser@21.2.23 @angular/platform-server@21.2.23 @angular/router@21.2.23 @angular/ssr@21.2.24
-npm install --save-dev --save-exact @angular/build@21.2.24 @angular/cli@21.2.24 @angular/compiler-cli@21.2.23 typescript@5.9.3
+# Update both dependency groups before invoking the resolver once.
+node --input-type=module <<'NODE'
+import { readFileSync, writeFileSync } from 'node:fs';
+const file = 'package.json';
+const pkg = JSON.parse(readFileSync(file, 'utf8'));
+for (const group of ['dependencies', 'devDependencies']) {
+  for (const name of Object.keys(pkg[group])) {
+    if (name.startsWith('@angular/')) {
+      pkg[group][name] = ['@angular/build', '@angular/cli', '@angular/ssr'].includes(name)
+        ? '21.2.24' : '21.2.23';
+    }
+  }
+}
+pkg.devDependencies.typescript = '5.9.3';
+writeFileSync(file, JSON.stringify(pkg, null, 2) + '\n');
+NODE
+npm install
 npm run check
 npm run build
 npm run canvas -- validate
