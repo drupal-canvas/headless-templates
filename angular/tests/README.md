@@ -30,6 +30,48 @@ Both consumers passed:
 - **Release gate:** the adapter remains unpublished, and a registry-resolved lockfile cannot be supplied until release. Canvas now registers Angular experimentally, and this template provides its expected `npm run dev` script. This does not make the unpublished dependency publicly installable. No publication or push is authorized or performed.
 - **Live-integration gate:** the transport is deliberately fake and loopback-only. It does not verify Drupal JWT signatures, single-use assertions or permissions. **No live Drupal integration or HTTPS cross-site CHIPS browser-matrix proof is claimed.** Before that testing, the service owner must approve/provide a Drupal endpoint with Canvas Headless enabled, trusted HTTPS frontend/editor origins and any actual signed preview URLs. Shared Drupal/services have not been configured or changed.
 
+## Proxy regression candidate
+
+The read-only live-service checkpoint identified two different failures on the
+same HTTPS frontend: Angular 22 rejected native draft exit with `Origin not
+allowed`; Angular 21 returned an empty app-root CSR shell even after its exact
+host was allowed. Its anonymous page API still contained published content, not
+the temporary editor change. See [DEPLOYMENT.md](../DEPLOYMENT.md) for the explicit
+trust boundary and owner-applied configuration.
+
+The candidate was checked and built through public npm scripts on both pinned
+majors using the same immutable adapter above. `proxy-server.mjs` exercises real
+Node HTTP requests against each production build and retains an optional legacy
+build for direct comparison. Both majors passed:
+
+- Their respective **legacy failure reproduced** (21 empty CSR shell, 22 exit
+  403), not inferred from a successful data endpoint.
+- Direct deployment ignores spoofed forwarding and still emits actual SSR;
+  exact allowed hosts are enforced even on adapter API routes.
+- An explicitly trusted immediate peer plus pinned HTTPS origin produces SSR,
+  permits native same-origin POST exit with cookie deletion/303, and continues
+  rejecting foreign browser Origins with 403.
+- Unknown peers cannot become trusted through X-Forwarded-For. Spoofed hosts,
+  schemes, ports, duplicate/comma-chain origin headers, malformed authorities
+  and conflicting ports are rejected. Unneeded forwarding headers are discarded.
+- Exact direct custom hosts and a pinned non-default HTTPS port work. Wildcard,
+  incomplete and invalid proxy configuration fails startup.
+
+Run against **owned disposable** bundles, never the live deployment:
+
+```sh
+TEST_SERVER_ENTRY="$OWNED_SERVER_BUNDLE" TEST_ANGULAR_MAJOR=22 TEST_EVIDENCE_FILE="$EVIDENCE_FILE" node tests/proxy-server.mjs
+```
+
+Repeat with Angular 21. Optionally set `TEST_LEGACY_SERVER_ENTRY` to an unchanged
+pre-fix bundle to reproduce its specific failure. The test launches only its own
+loopback mock/server processes and stops them in `finally`. It uses node:http so
+Host spoof tests really send the supplied Host (fetch can ignore that override).
+It simulates the upstream HTTP side of TLS termination, not an actual trusted
+cloud ingress. Live owner confirmation/application and real browser SSR/exit
+verification remain prerequisites before a video can present the fix as a live
+success. All existing live recordings/evidence remain untouched.
+
 ## Reproduce with owner-supplied artifacts
 
 Copy supplied tarballs into a directory you own. Do not build or alter a sibling checkout's artifacts. Then, from this standalone template:
