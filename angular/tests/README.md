@@ -72,6 +72,38 @@ cloud ingress. Live owner confirmation/application and real browser SSR/exit
 verification remain prerequisites before a video can present the fix as a live
 success. All existing live recordings/evidence remain untouched.
 
+## Canonical-address candidate
+
+Both Angular majors also passed public check/build and the expanded proxy suite
+with the separate canonical-address mode. Header-based strict proxy behavior was
+not weakened. The same immutable adapter/dependency trees were reused, with new
+owned build output; no live installs, Canvas files or recordings were changed.
+
+`canonical-request.mjs` supplies six tests per major for exact URL invariance
+under baseline/spoof/chained/duplicate forwarding; encoded path/query preservation;
+actual `originalUrl ?? url` validation; malformed/duplicate/unlisted raw Host;
+once-consumed Node POST streams and unchanged cookie/auth/Origin headers; retained
+body-stream identity and abort propagation; invalid/conflicting configuration.
+Run in each installed disposable consumer on the documented Node version:
+
+```sh
+node --import @angular/compiler --test tests/canonical-request.mjs
+```
+
+The expanded `proxy-server.mjs` production-server suite verifies actual SSR with
+all those forwarding variants, canonical POST exit and cookie deletion, foreign/
+missing/null Origin rejection, authenticated vs anonymous page contexts, streamed
+JSON renewal, unchanged assertion-protected metadata, fixed non-default HTTPS
+ports, and invalid Host/targets rejected before adapter content requests. Raw TCP
+probes cover duplicate Host and control characters without a client URL parser
+normalizing them first. The direct and strict-proxy regression scenarios and both
+legacy failure reproductions continue to pass.
+
+These are local request-boundary/mock-transport proofs, not live ingress identity,
+TLS assurance or local-workload isolation. Canonical mode defines an application
+address, not authentication. Live-owner application and browser verification are
+still required before claiming a corrected live workflow or delivering its video.
+
 ## Reproduce with owner-supplied artifacts
 
 Copy supplied tarballs into a directory you own. Do not build or alter a sibling checkout's artifacts. Then, from this standalone template:

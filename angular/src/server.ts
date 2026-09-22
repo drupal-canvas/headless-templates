@@ -16,7 +16,7 @@ trustSystemCertificates();
 const app = express();
 const policy = requestPolicy();
 const angular = new AngularNodeAppEngine({
-  allowedHosts: policy.allowedHosts,
+  allowedHosts: policy.engineAllowedHosts,
   trustProxyHeaders: policy.trustProxyHeaders,
 });
 // Enforce the boundary before static assets AND adapter API routes, which may

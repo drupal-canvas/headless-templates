@@ -79,7 +79,7 @@ Keep this starter's Node requirement when switching majors; Angular 21's lower e
 - `src/styles.css`: shared Tailwind theme, Canvas preview CSS, and Angular-host-aware accordion selectors.
 - `src/routes.ts`, `src/page.ts`: catch-all resolver, `CanvasPageStore`, not-found UI, and draft banner presentation.
 - `src/main.ts`, `src/main.server.ts`: hydration, routing, `provideCanvas()`, and `RenderMode.Server` for every route. No draft prerendering.
-- `src/server.ts`: request-authority validation, static assets, generated manifest, and the adapter's `createCanvasHandler`. Configure exact `CANVAS_ALLOWED_HOSTS`; HTTPS-terminating proxies require the explicit origin/peer policy in [DEPLOYMENT.md](DEPLOYMENT.md). Setting Angular's host allowlist alone does not establish proxy trust.
+- `src/server.ts`: request-authority validation, static assets, generated manifest, and the adapter's `createCanvasHandler`. Configure exact `CANVAS_ALLOWED_HOSTS`; for HTTPS termination choose the explicit single canonical-address mode or strict trusted-proxy policy in [DEPLOYMENT.md](DEPLOYMENT.md). Setting Angular's host allowlist alone does not establish proxy trust.
 
 The adapter owns `/api/draft`, POST `/api/draft/renew`, POST `/api/disable-draft`, authenticated `/api/canvas/components`, same-origin `/api/canvas/page` and `/api/canvas/entity`, and `/api/canvas/component-preview?componentId=…` for thumbnails. It also owns request-scoped Drupal access, redirects/404 status, route/entity identity, title/meta/link/JSON-LD updates, navigation/refresh, editor geometry, cookie/CSP policy, and the draft-session renewal protocol. The template does not reimplement these protocols.
 

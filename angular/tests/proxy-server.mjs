@@ -2,7 +2,7 @@
 // an HTTPS-terminating proxy; this is not live Drupal or browser HTTPS proof.
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { createServer } from "node:net";
+import { createServer, createConnection } from "node:net";
 import { request as httpRequest } from "node:http";
 import { setTimeout as delay } from "node:timers/promises";
 import { writeFile } from "node:fs/promises";
@@ -25,8 +25,9 @@ async function start(entry, env) {
     env: {
       ...process.env,
       CANVAS_ALLOWED_HOSTS: "",
-      CANVAS_PROXY_ORIGIN: "",
-      CANVAS_TRUSTED_PROXY_IPS: "",
+      CANVAS_PROXY_ORIGIN: undefined,
+      CANVAS_TRUSTED_PROXY_IPS: undefined,
+      CANVAS_CANONICAL_ORIGIN: undefined,
       ...env,
     },
     stdio: ["ignore", "pipe", "pipe"],
@@ -69,11 +70,16 @@ try {
       ...config,
     });
     // Use node:http: fetch may ignore a caller-supplied Host header.
-    const request = (path, headers = {}, method = "GET") =>
+    const request = (path, headers = {}, method = "GET", body) =>
       new Promise((resolve, reject) => {
         const req = httpRequest(
-          `http://127.0.0.1:${listenPort}${path}`,
-          { method, headers: { Connection: "close", ...headers } },
+          {
+            hostname: "127.0.0.1",
+            port: listenPort,
+            path,
+            method,
+            headers: { Connection: "close", ...headers },
+          },
           (res) => {
             const chunks = [];
             res.on("data", (chunk) => chunks.push(chunk));
@@ -94,10 +100,27 @@ try {
           },
         );
         req.on("error", reject);
-        req.end();
+        req.end(body);
+      });
+    const raw = (target, headers) =>
+      new Promise((resolve, reject) => {
+        const socket = createConnection(listenPort, "127.0.0.1");
+        let response = "";
+        socket.on("connect", () =>
+          socket.write(
+            `GET ${target} HTTP/1.1\r\n${headers.join("\r\n")}\r\nConnection: close\r\n\r\n`,
+          ),
+        );
+        socket.on("data", (chunk) => {
+          response += chunk;
+        });
+        socket.on("end", () =>
+          resolve(Number(/^HTTP\/1\.1 (\d+)/.exec(response)?.[1])),
+        );
+        socket.on("error", reject);
       });
     try {
-      await test(request);
+      await test(request, raw);
       evidence.push({ name, passed: true, serverLog: server.log() });
       console.log(name);
     } finally {
@@ -125,6 +148,22 @@ try {
     { ...proxy, CANVAS_PROXY_ORIGIN: "https://frontend.example/path" },
     { ...proxy, CANVAS_PROXY_ORIGIN: "https://*.example" },
     { ...proxy, CANVAS_TRUSTED_PROXY_IPS: "127.0.0.0/8" },
+    { ...proxy, CANVAS_CANONICAL_ORIGIN: "https://frontend.example" },
+    {
+      CANVAS_CANONICAL_ORIGIN: "https://frontend.example",
+      CANVAS_PROXY_ORIGIN: "",
+    },
+    ...[
+      "",
+      "http://frontend.example",
+      "https://frontend.example/path",
+      "https://frontend.example/path/..",
+      "https://frontend.example?token=secret",
+      "https://frontend.example#fragment",
+      "https://user:secret@frontend.example",
+      "https://*.example",
+      "https://frontend.example\n",
+    ].map((CANVAS_CANONICAL_ORIGIN) => ({ CANVAS_CANONICAL_ORIGIN })),
   ])
     await assert.rejects(
       start(process.env.TEST_SERVER_ENTRY, {
@@ -143,6 +182,195 @@ try {
     assert.match(html, /ng-server-context="ssr"/);
     assert.match(html, /Enter a heading/);
   }
+  await scenario(
+    "Canonical authority is invariant; SSR and unchanged CSRF on both majors",
+    { CANVAS_CANONICAL_ORIGIN: "https://frontend.example" },
+    async (req, raw) => {
+      for (const headers of [
+        {},
+        forwarded,
+        { ...forwarded, "x-forwarded-host": "evil.example" },
+        {
+          ...forwarded,
+          "x-forwarded-host": "evil.example,frontend.example",
+          "x-forwarded-proto": "http",
+          "x-forwarded-port": "444",
+        },
+        {
+          ...forwarded,
+          "x-forwarded-host": ["evil.example", "frontend.example"],
+          "x-forwarded-proto": ["http", "https"],
+          "x-forwarded-port": ["1", "443"],
+        },
+      ]) {
+        await ssr(await req("/components/heading/0", headers));
+        const exit = await req(
+          "/api/disable-draft",
+          { ...headers, Origin: "https://frontend.example" },
+          "POST",
+        );
+        assert.equal(exit.status, 303);
+      }
+      const freshAssertion = async () =>
+        (await (await fetch(mock + "/assertion")).json()).assertion;
+      const assertion = await freshAssertion();
+      const activation = await req(
+        "/api/draft?assertion=" + encodeURIComponent(assertion),
+        forwarded,
+      );
+      assert.equal(activation.status, 307);
+      const cookie = activation.headers
+        .getSetCookie()
+        .map((c) => c.split(";")[0])
+        .join("; ");
+      const authenticated = await (
+        await req("/api/canvas/page?path=/components/heading/0", {
+          Cookie: cookie,
+        })
+      ).json();
+      assert.equal(authenticated.session.enabled, true);
+      assert.equal(authenticated.page.content.canvasDraftMode, true);
+      const anonymous = await (
+        await req("/api/canvas/page?path=/components/heading/0")
+      ).json();
+      assert.equal(anonymous.session.enabled, false);
+      const renewed = await req(
+        "/api/draft/renew",
+        {
+          Cookie: cookie,
+          Origin: "https://frontend.example",
+          "Content-Type": "application/json",
+        },
+        "POST",
+        JSON.stringify({ assertion: await freshAssertion() }),
+      );
+      assert.equal(renewed.status, 200);
+      assert.equal(typeof (await renewed.json()).tokenExpiresAt, "number");
+      const exit = await req(
+        "/api/disable-draft",
+        { Cookie: cookie, Origin: "https://frontend.example" },
+        "POST",
+      );
+      assert.equal(exit.status, 303);
+      assert(
+        exit.headers
+          .getSetCookie()
+          .some(
+            (c) =>
+              Date.parse(/Expires=([^;]+)/i.exec(c)?.[1] ?? "") <= Date.now(),
+          ),
+      );
+      assert.equal((await req("/api/canvas/components")).status, 401);
+      assert.equal(
+        (
+          await req("/api/canvas/components", {
+            Authorization: "Bearer " + (await freshAssertion()),
+            Origin: mock,
+          })
+        ).status,
+        200,
+      );
+      assert.equal(
+        (
+          await req("/api/canvas/components", {
+            Authorization: "Bearer " + (await freshAssertion()),
+            Origin: "https://foreign.example",
+          })
+        ).status,
+        403,
+      );
+      for (const Origin of [
+        "https://evil.example",
+        "http://localhost",
+        "null",
+        undefined,
+      ]) {
+        const headers = {
+          ...forwarded,
+          ...(Origin === undefined ? {} : { Origin }),
+        };
+        assert.equal(
+          (await req("/api/disable-draft", headers, "POST")).status,
+          403,
+        );
+      }
+      for (const Host of [
+        "evil.example",
+        "frontend.example",
+        "localhost/path",
+        "user@localhost",
+        "localhost,evil.example",
+      ]) {
+        for (const path of [
+          "/api/canvas/page?path=/",
+          "/api/disable-draft",
+          "/main.js",
+        ])
+          assert.equal((await req(path, { Host })).status, 400);
+      }
+      assert.equal(
+        await raw("/api/canvas/page?path=/", [
+          "Host: localhost",
+          "Host: localhost",
+        ]),
+        400,
+      );
+      const statsBefore = (await (await fetch(mock + "/stats")).json()).requests
+        .length;
+      for (const target of [
+        "http://evil.example/api/canvas/page?path=/",
+        "evil.example:443",
+        "//evil.example/api/canvas/page?path=/",
+        "/\\evil.example",
+        "/api/canvas/page#fragment",
+        "/a/../api/canvas/page",
+        "/%2e%2e/api/canvas/page",
+      ]) {
+        assert.equal((await req(target)).status, 400, target);
+      }
+      for (const target of ["/bad\u0001path", "/bad\tpath"])
+        assert.equal(await raw(target, ["Host: localhost"]), 400);
+      const statsAfter = (await (await fetch(mock + "/stats")).json()).requests
+        .length;
+      assert.equal(
+        statsAfter,
+        statsBefore,
+        "Invalid targets must be rejected before adapter content access",
+      );
+      const path = "/components/heading/0?q=%2F%23%26&plus=a+b&case=%2f";
+      const data = await (
+        await req("/api/canvas/page?path=" + encodeURIComponent(path))
+      ).json();
+      assert.equal(data.page.route.requestUri, path);
+    },
+  );
+  await scenario(
+    "Canonical non-default HTTPS port is fixed, not forwarded",
+    { CANVAS_CANONICAL_ORIGIN: "https://frontend.example:8443" },
+    async (req) => {
+      await ssr(await req("/components/heading/0", forwarded));
+      assert.equal(
+        (
+          await req(
+            "/api/disable-draft",
+            { ...forwarded, Origin: "https://frontend.example:8443" },
+            "POST",
+          )
+        ).status,
+        303,
+      );
+      assert.equal(
+        (
+          await req(
+            "/api/disable-draft",
+            { ...forwarded, Origin: "https://frontend.example" },
+            "POST",
+          )
+        ).status,
+        403,
+      );
+    },
+  );
   if (process.env.TEST_LEGACY_SERVER_ENTRY) {
     await scenario(
       "Legacy regression reproduced",
