@@ -1,0 +1,40 @@
+import { resolve } from "node:path";
+import express from "express";
+import {
+  AngularNodeAppEngine,
+  createNodeRequestHandler,
+  createWebRequestFromNodeRequest,
+  isMainModule,
+  writeResponseToNodeResponse,
+} from "@angular/ssr/node";
+import { createCanvasHandler } from "@drupal-canvas/headless-angular/server";
+import { trustSystemCertificates } from "@drupal-canvas/headless/node";
+
+import manifest from "./canvas-manifest.generated";
+// Trust installed development/system CAs without disabling TLS verification.
+trustSystemCertificates();
+const app = express();
+const angular = new AngularNodeAppEngine();
+app.use(
+  express.static(resolve(import.meta.dirname, "../browser"), {
+    index: false,
+    maxAge: "1y",
+  }),
+);
+const canvas = createCanvasHandler({ manifest });
+app.use((req, res, next) => {
+  canvas(createWebRequestFromNodeRequest(req), (request, context) =>
+    angular.handle(request, context),
+  )
+    .then((response) =>
+      response ? writeResponseToNodeResponse(response, res) : next(),
+    )
+    .catch(next);
+});
+if (isMainModule(import.meta.url)) {
+  const port = Number(process.env["PORT"] ?? 4200);
+  app.listen(port, () =>
+    console.log(`Angular server listening on port ${port}`),
+  );
+}
+export const reqHandler = createNodeRequestHandler(app);

@@ -1,0 +1,30 @@
+@if (preHeading || heading) {
+<div [class]="'dark flex w-full flex-col ' + align[layout]">
+  @if (preHeading) {
+  <div
+    [class]="'mb-4 font-bold ' + preHeadingSizes[headingSize] + ' ' + (textColor === 'light' ? 'text-primary-light' : 'text-primary-dark') + ' ' + (shadows[textShadow] || '')"
+  >
+    {{ preHeading }}
+  </div>
+  } @if (heading) { @switch (headingElement) { @case ('h1') {
+  <h1 [class]="headingClasses">{{ heading }}</h1>
+  } @case ('h2') {
+  <h2 [class]="headingClasses">{{ heading }}</h2>
+  } @case ('h3') {
+  <h3 [class]="headingClasses">{{ heading }}</h3>
+  } @case ('h4') {
+  <h4 [class]="headingClasses">{{ heading }}</h4>
+  } @case ('h5') {
+  <h5 [class]="headingClasses">{{ heading }}</h5>
+  } @case ('h6') {
+  <h6 [class]="headingClasses">{{ heading }}</h6>
+  } @case ('div') {
+  <div [class]="headingClasses">{{ heading }}</div>
+  } @case ('p') {
+  <p [class]="headingClasses">{{ heading }}</p>
+  } @case ('span') { <span [class]="headingClasses">{{ heading }}</span> }
+  @default {
+  <h2 [class]="headingClasses">{{ heading }}</h2>
+  } } }
+</div>
+}

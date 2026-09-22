@@ -1,0 +1,7 @@
+@if (text) {
+<div
+  [class]="'my-8 ' + sizes[textSize] + ' ' + (textColor === 'light' ? '!text-white' : '!text-black') + ' ' + (shadows[textShadow] || '')"
+>
+  <canvas-markup [html]="text" />
+</div>
+}

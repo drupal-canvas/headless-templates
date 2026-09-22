@@ -1,0 +1,26 @@
+<div
+  [class]="'my-8 flex w-full flex-col leading-[normal] ' + (textColor === 'light' ? 'text-white' : '')"
+>
+  <div class="flex grow justify-center gap-6">
+    <div class="w-1 bg-gray-200"></div>
+    <div class="grow font-medium">
+      @if (text) {
+      <div class="flex items-start self-stretch text-xl leading-8">
+        <canvas-markup [html]="text" />
+      </div>
+      } @if (name) {
+      <div
+        class="flex items-end self-stretch pt-5 leading-6 font-bold whitespace-pre-wrap"
+      >
+        {{ name }}
+      </div>
+      } @if (title) {
+      <div
+        [class]="'text-sm leading-5 whitespace-pre-wrap ' + (textColor === 'light' ? 'text-gray-200' : 'text-gray-500')"
+      >
+        {{ title }}
+      </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="flex w-full justify-start bg-cover bg-center bg-no-repeat py-24">
+  <div class="mx-6 flex w-full items-center justify-center">
+    <div
+      [class]="'mx-auto flex w-full max-w-[1360px] gap-8 md:items-center ' + (layouts[layout] || '')"
+    >
+      <div
+        [class]="'flex w-full flex-col items-start justify-center gap-4 ' + widths[columnWidths][0]"
+      >
+        <div class="mb-4">
+          <app-heading
+            [heading]="heading"
+            [headingElement]="headingElement"
+            [headingSize]="headingSize"
+            [preHeading]="preHeading"
+            [textColor]="textColor"
+            [textShadow]="textShadow"
+          />
+        </div>
+        @if (text) {
+        <div
+          [class]="'my-8 mb-4 text-lg/8 ' + (textColor === 'light' ? '!text-white' : '!text-black') + ' ' + (shadows[textShadow] || '')"
+        >
+          <canvas-markup [html]="text" />
+        </div>
+        }
+        <div class="flex w-full min-w-3xs gap-4">
+          <canvas-slot name="buttons" />
+        </div>
+      </div>
+      <div [class]="'flex w-full items-center ' + widths[columnWidths][1]">
+        @if (image) {
+        <img
+          [src]="image.src"
+          [alt]="image.alt || ''"
+          [attr.width]="image.width"
+          [attr.height]="image.height"
+          class="h-auto w-full"
+        />
+        }
+      </div>
+    </div>
+  </div>
+</div>

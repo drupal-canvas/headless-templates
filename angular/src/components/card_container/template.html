@@ -1,0 +1,17 @@
+<div class="mx-6 flex flex-col items-center gap-16">
+  @if (heading) {
+  <app-heading
+    [heading]="heading"
+    [headingElement]="headingElement"
+    [headingSize]="headingSize"
+    [layout]="headingPosition"
+    [preHeading]="preHeading"
+    [textColor]="textColor"
+  />
+  }
+  <div class="mx-auto w-full max-w-[1360px] px-6">
+    <div [class]="'grid w-full ' + layouts[layout] + ' ' + gaps[gap]">
+      <canvas-slot name="content" />
+    </div>
+  </div>
+</div>

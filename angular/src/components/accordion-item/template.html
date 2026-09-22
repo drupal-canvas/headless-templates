@@ -1,0 +1,106 @@
+<div [attr.id]="anchorId || null" [class]="itemClasses" data-accordion-item>
+  @switch (headingElement) { @case ('h2') {
+  <h2 class="m-0"><ng-container [ngTemplateOutlet]="trigger" /></h2>
+  } @case ('h3') {
+  <h3 class="m-0"><ng-container [ngTemplateOutlet]="trigger" /></h3>
+  } @case ('h4') {
+  <h4 class="m-0"><ng-container [ngTemplateOutlet]="trigger" /></h4>
+  } @case ('h5') {
+  <h5 class="m-0"><ng-container [ngTemplateOutlet]="trigger" /></h5>
+  } @case ('h6') {
+  <h6 class="m-0"><ng-container [ngTemplateOutlet]="trigger" /></h6>
+  } @default {
+  <h3 class="m-0"><ng-container [ngTemplateOutlet]="trigger" /></h3>
+  } }
+  <div
+    [id]="panelId"
+    [attr.aria-hidden]="!isOpen()"
+    [attr.aria-labelledby]="buttonId"
+    [class]="'grid w-full transition-[grid-template-rows] duration-300 ease-in-out ' + (isOpen() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]')"
+    [inert]="!isOpen()"
+    data-accordion-content
+    role="region"
+  >
+    <div class="min-h-0 overflow-hidden">
+      <div
+        [class]="'pb-4 text-gray-700 ' + (group.variant === 'bordered' ? 'px-5' : group.variant === 'separated' ? 'px-4' : '')"
+      >
+        <canvas-slot name="content" />
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #trigger
+  ><button
+    [id]="buttonId"
+    type="button"
+    [attr.aria-controls]="panelId"
+    [attr.aria-expanded]="isOpen()"
+    [class]="buttonClasses"
+    data-accordion-button
+    (click)="isOpen.set(!isOpen())"
+  >
+    @if (group.variant === 'bordered') {
+    <span
+      class="relative inline-flex size-3.5 shrink-0 items-center justify-center"
+    >
+      <span
+        [class]="'absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-out ' + (isOpen() ? 'opacity-0' : 'opacity-100')"
+        ><svg
+          aria-hidden="true"
+          class="block size-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M5 12h14"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+          <path
+            d="M12 5v14"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          /></svg
+      ></span>
+      <span
+        [class]="'absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-out ' + (isOpen() ? 'opacity-100' : 'opacity-0')"
+        ><svg
+          aria-hidden="true"
+          class="block size-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M5 12h14"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          /></svg
+      ></span>
+    </span>
+    }
+    <span>{{ title }}</span>
+    @if (group.variant !== 'bordered') {
+    <svg
+      aria-hidden="true"
+      [class]="'size-4 shrink-0 transition-transform duration-300 ' + (isOpen() ? 'rotate-180' : 'rotate-0')"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="m6 9 6 6 6-6"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+      />
+    </svg>
+    }
+  </button></ng-template
+>

@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "projects": {
+    "angular": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "buildTarget": "angular:build:development",
+            "port": 4200
+          }
+        },
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/angular",
+            "outputHashing": "all",
+            "browser": "src/main.ts",
+            "server": "src/main.server.ts",
+            "ssr": {
+              "entry": "src/server.ts"
+            },
+            "outputMode": "server",
+            "index": "src/index.html",
+            "tsConfig": "tsconfig.json",
+            "styles": ["src/styles.css"],
+            "optimization": true,
+            "sourceMap": false,
+            "security": {
+              "allowedHosts": ["localhost", "127.0.0.1"]
+            }
+          },
+          "configurations": {
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "outputHashing": "none"
+            }
+          }
+        }
+      }
+    }
+  }
+}
