@@ -12,8 +12,5 @@
   "angularCompilerOptions": {
     "strictTemplates": true
   },
-  "include": [
-    "src/**/*.ts",
-    "node_modules/@drupal-canvas/headless-host/src/index.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

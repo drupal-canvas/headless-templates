@@ -17,9 +17,9 @@ When adding or changing a component:
 4. Verify the component through the framework's `CanvasComponentTree` renderer.
 5. Run `npm run check` and `npm run build` inside every template.
 6. Run `npm run canvas -- validate` in every template.
-7. Verify previews with `npm run workbench` in Next.js and TanStack Start. Angular has no Workbench: verify real-browser SSR/hydration, responsive component parity, interactions and editor geometry through `CanvasComponentTree`, on both supported Angular majors with the same adapter artifact. See [Angular validation](angular/tests/README.md).
+7. Verify previews with `npm run workbench` in Next.js and TanStack Start. Angular has no Workbench; verify components in the application on both supported Angular majors.
 
-Angular components use ordinary inputs, default exports and the adapter's `CanvasSlot`. Persistent Angular hosts must be accounted for in grid/flex layouts and direct-child selectors. Keep generated manifests and all server credentials out of browser imports. Adapter and Canvas Create registry changes belong in Canvas, not this template repository.
+Angular hosts remain in the DOM even with `display: contents`; account for them in direct-child selectors. Keep generated manifests and server credentials out of browser imports.
 
 ## Dependency changes
 
