@@ -8,6 +8,7 @@ import {
   getClient,
   getDraftData,
   getDraftEditorOrigin,
+  getJsonApiRuntimeConfig,
   isDraftModeEnabled,
   isDraftSessionExpired,
 } from '@drupal-canvas/headless-tanstack-start'
@@ -20,9 +21,9 @@ import type {
   DraftSessionState,
 } from '#/lib/content'
 
-interface JsonApiDocument<T> {
-  data?: T | null
-  errors?: Array<{ status?: string; detail?: string }>
+/** Serializable configuration only: never return the client or session token. */
+export function readJsonApiRuntimeConfig() {
+  return getJsonApiRuntimeConfig()
 }
 
 /**
@@ -60,17 +61,13 @@ export async function readDraftSessionState(): Promise<DraftSessionState> {
  */
 export async function readContentLists(): Promise<ContentLists> {
   const client = await getClient()
-  const [canvasPagesDocument, articlesDocument] = await Promise.all([
-    client.getCollection('canvas_page--canvas_page') as Promise<
-      JsonApiDocument<Array<CanvasPage>>
-    >,
-    client.getCollection('node--article') as Promise<
-      JsonApiDocument<Array<Article>>
-    >,
+  const [canvasPages, articles] = await Promise.all([
+    client.getCollection<Array<CanvasPage>>('canvas_page--canvas_page'),
+    client.getCollection<Array<Article>>('node--article'),
   ])
   return {
-    canvasPages: canvasPagesDocument.data ?? [],
-    articles: articlesDocument.data ?? [],
+    canvasPages: canvasPages ?? [],
+    articles: articles ?? [],
   }
 }
 

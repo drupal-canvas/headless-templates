@@ -10,11 +10,17 @@ import { createServerFn } from '@tanstack/react-start'
 import {
   readContentLists,
   readDraftSessionState,
+  readJsonApiRuntimeConfig,
   readPageForPath,
 } from '#/server/canvas.server'
 
 export const getDraftSessionState = createServerFn().handler(() =>
   readDraftSessionState(),
+)
+
+/** Nonsecret configuration only; the client and session token stay on the server. */
+export const getJsonApiRuntimeConfig = createServerFn().handler(() =>
+  readJsonApiRuntimeConfig(),
 )
 
 /**

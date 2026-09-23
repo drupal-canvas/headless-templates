@@ -15,6 +15,7 @@ import { Route as ApiDraftRouteImport } from './routes/api/draft'
 import { Route as ApiCanvasComponentPreviewRouteImport } from './routes/api/canvas.component-preview'
 import { Route as ApiCanvasComponentsRouteImport } from './routes/api/canvas.components'
 import { Route as ApiDraftRenewRouteImport } from './routes/api/draft.renew'
+import { Route as ApiCanvasJsonapiSplatRouteImport } from './routes/api/canvas.jsonapi.$'
 
 const SplatRoute = SplatRouteImport.update({
   id: '/$',
@@ -47,6 +48,11 @@ const ApiDraftRenewRoute = ApiDraftRenewRouteImport.update({
   path: '/renew',
   getParentRoute: () => ApiDraftRoute,
 } as any)
+const ApiCanvasJsonapiSplatRoute = ApiCanvasJsonapiSplatRouteImport.update({
+  id: '/api/canvas/jsonapi/$',
+  path: '/api/canvas/jsonapi/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
@@ -55,6 +61,7 @@ export interface FileRoutesByFullPath {
   '/api/canvas/component-preview': typeof ApiCanvasComponentPreviewRoute
   '/api/canvas/components': typeof ApiCanvasComponentsRoute
   '/api/draft/renew': typeof ApiDraftRenewRoute
+  '/api/canvas/jsonapi/$': typeof ApiCanvasJsonapiSplatRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof SplatRoute
@@ -63,6 +70,7 @@ export interface FileRoutesByTo {
   '/api/canvas/component-preview': typeof ApiCanvasComponentPreviewRoute
   '/api/canvas/components': typeof ApiCanvasComponentsRoute
   '/api/draft/renew': typeof ApiDraftRenewRoute
+  '/api/canvas/jsonapi/$': typeof ApiCanvasJsonapiSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -72,6 +80,7 @@ export interface FileRoutesById {
   '/api/canvas/component-preview': typeof ApiCanvasComponentPreviewRoute
   '/api/canvas/components': typeof ApiCanvasComponentsRoute
   '/api/draft/renew': typeof ApiDraftRenewRoute
+  '/api/canvas/jsonapi/$': typeof ApiCanvasJsonapiSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -82,6 +91,7 @@ export interface FileRouteTypes {
     | '/api/canvas/component-preview'
     | '/api/canvas/components'
     | '/api/draft/renew'
+    | '/api/canvas/jsonapi/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
@@ -90,6 +100,7 @@ export interface FileRouteTypes {
     | '/api/canvas/component-preview'
     | '/api/canvas/components'
     | '/api/draft/renew'
+    | '/api/canvas/jsonapi/$'
   id:
     | '__root__'
     | '/$'
@@ -98,6 +109,7 @@ export interface FileRouteTypes {
     | '/api/canvas/component-preview'
     | '/api/canvas/components'
     | '/api/draft/renew'
+    | '/api/canvas/jsonapi/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   ApiDraftRoute: typeof ApiDraftRouteWithChildren
   ApiCanvasComponentPreviewRoute: typeof ApiCanvasComponentPreviewRoute
   ApiCanvasComponentsRoute: typeof ApiCanvasComponentsRoute
+  ApiCanvasJsonapiSplatRoute: typeof ApiCanvasJsonapiSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDraftRenewRouteImport
       parentRoute: typeof ApiDraftRoute
     }
+    '/api/canvas/jsonapi/$': {
+      id: '/api/canvas/jsonapi/$'
+      path: '/api/canvas/jsonapi/$'
+      fullPath: '/api/canvas/jsonapi/$'
+      preLoaderRoute: typeof ApiCanvasJsonapiSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -173,6 +193,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDraftRoute: ApiDraftRouteWithChildren,
   ApiCanvasComponentPreviewRoute: ApiCanvasComponentPreviewRoute,
   ApiCanvasComponentsRoute: ApiCanvasComponentsRoute,
+  ApiCanvasJsonapiSplatRoute: ApiCanvasJsonapiSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

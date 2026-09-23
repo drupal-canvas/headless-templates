@@ -2,11 +2,6 @@ import { getClient } from '@drupal-canvas/headless-nuxt/server';
 
 import type { Article, CanvasPage, ContentLists } from '#shared/content';
 
-interface JsonApiDocument<T> {
-  data?: T | null;
-  errors?: Array<{ status?: string; detail?: string }>;
-}
-
 /**
  * Reference code: nothing in the template calls this route today. It is
  * kept to show how to list Drupal content for a listing page.
@@ -18,17 +13,13 @@ interface JsonApiDocument<T> {
  */
 export default defineEventHandler(async (event): Promise<ContentLists> => {
   const client = await getClient(event);
-  const [canvasPagesDocument, articlesDocument] = await Promise.all([
-    client.getCollection('canvas_page--canvas_page') as Promise<
-      JsonApiDocument<CanvasPage[]>
-    >,
-    client.getCollection('node--article') as Promise<
-      JsonApiDocument<Article[]>
-    >,
+  const [canvasPages, articles] = await Promise.all([
+    client.getCollection<CanvasPage[]>('canvas_page--canvas_page'),
+    client.getCollection<Article[]>('node--article'),
   ]);
 
   return {
-    canvasPages: canvasPagesDocument?.data ?? [],
-    articles: articlesDocument?.data ?? [],
+    canvasPages: canvasPages ?? [],
+    articles: articles ?? [],
   };
 });

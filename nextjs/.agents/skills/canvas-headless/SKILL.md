@@ -5,8 +5,8 @@ description:
   `@drupal-canvas/headless` or `@drupal-canvas/headless-*` in `package.json`,
   i.e. a Next.js, Nuxt, Astro, or TanStack Start app rendering Canvas
   components. Establishes what differs from Canvas-rendered React projects:
-  per-framework entry files and slot consumption, the unsupported
-  `drupal-canvas` package, SDK-based data fetching, and changed
+  per-framework entry files and slot consumption, the ADR21 portable
+  runtime APIs, SDK-based data fetching, and changed
   push/pull/validate semantics.
 ---
 
@@ -68,12 +68,26 @@ module from the discovered components (for example under `.canvas/`). Never
 write manual component-to-machine-name mappings and never edit generated
 `.canvas/` files.
 
-## The `drupal-canvas` package is not supported
+## Runtime APIs after ADR21
 
-Do not import from the `drupal-canvas` package in a headless codebase. None of
-its exports — `cn`, `FormattedText`, `Image`, `JsonApiClient`, `Region`,
-`sortMenu`, `getPageData`, and the rest — are supported in headless components.
-Use framework-native alternatives instead:
+This template contains preparatory ADR21 guidance. Its package pins must be
+updated to published ADR21-compatible releases before using the new APIs; see
+its README. This section is a local correction to the bundled upstream skill.
+
+React components use `usePageContext`, `useSiteContext` and `useJsonApiClient`
+from `drupal-canvas/react`, handling nullable results. The renderer establishes
+providers from `page.context` and nonsecret runtime configuration. Existing
+`Image`, `FormattedText`, `cn` and menu/path utilities keep their public paths.
+`FormattedText` still requires trusted or sanitized HTML. Region APIs remain
+available but deprecated; do not add region-provider integration.
+
+Do not call `getPageData()`, `getSiteData()` or `new JsonApiClient()` in headless
+code. They are legacy Drupal/Workbench APIs; headless server code uses the
+request-aware SDK `getClient()`. Authoring helpers at
+`drupal-canvas/json-render-utils` are not the headless content renderer.
+
+Native Vue and Astro components keep their framework-native rendering, not
+React hooks/providers. The existing component implementations need no rewrite:
 
 - **Rich text / HTML props:** render with the framework's HTML-injection
   primitive (`v-html` in Vue, `set:html` in Astro, `dangerouslySetInnerHTML` in
@@ -90,20 +104,28 @@ Use framework-native alternatives instead:
 
 ## Data fetching
 
-Fetch Drupal data through the headless SDK, not through `drupal-canvas`:
+Load page trees and server-side data through the headless SDK:
 
 - **Page trees:** `fetchPage()` from the framework's adapter package. It runs
   server-side only (server components/functions in Next.js and TanStack Start,
   Nitro server routes in Nuxt, the Astro context in Astro). Pass the result to
-  `CanvasComponentTree`.
-- **Content queries (lists, entities, menus):** the JSON:API client from the
-  headless SDK — `getClient()` (public) or the draft-aware variant — instead of
-  `JsonApiClient` from `drupal-canvas`.
+  `CanvasComponentTree`; React renderers also receive `context={page.context}`.
+- **Content queries (lists, entities, menus):** use the SDK's request-aware
+  `getClient()`, which selects public or draft access from the current session.
+  Its shared client uses `DefaultSerializer`: collections are arrays and fields
+  are flattened onto resources, not nested under `data`/`attributes`.
 - Prefer the framework's idiomatic data-loading path (server components, route
   loaders, `useFetch`, Astro frontmatter) over client-side fetching libraries.
 
-The SWR + `JsonApiClient` patterns in `canvas-data-fetching` describe
-Canvas-rendered React projects; do not copy them into a headless codebase.
+For portable React components, use `useJsonApiClient()` from
+`drupal-canvas/react`, not legacy constructor examples in `canvas-data-fetching`.
+Browser requests use the application's same-origin SDK proxy. Credentials stay
+in the server/session integration, never in page context or serialized clients.
+
+No starter component currently uses SWR. If adding it, prefetch draft data with
+server `getClient()` and pass authorized, request-scoped SWR fallback data with
+matching keys. The renderer's draft client cannot fetch during SSR. Components
+remain synchronous; renewal does not automatically clear application caches.
 
 ## CLI semantics in a headless codebase
 

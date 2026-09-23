@@ -1,3 +1,4 @@
+import { CanvasRuntime } from '@drupal-canvas/headless-next/CanvasRuntime';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { DraftIndicator } from '../components/draft-indicator';
@@ -12,8 +13,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="flex min-h-full flex-col">
-        <DraftIndicator />
-        {children}
+        <CanvasRuntime>
+          <DraftIndicator />
+          {children}
+        </CanvasRuntime>
       </body>
     </html>
   );

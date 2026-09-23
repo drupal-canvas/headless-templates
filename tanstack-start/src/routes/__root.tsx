@@ -5,8 +5,13 @@ import {
   createRootRoute,
 } from '@tanstack/react-router'
 
+import { JsonApiRuntimeProvider } from '@drupal-canvas/headless-react'
+
 import { DraftBanner } from '#/components/DraftBanner'
-import { getDraftSessionState } from '#/server/canvas.functions'
+import {
+  getDraftSessionState,
+  getJsonApiRuntimeConfig,
+} from '#/server/canvas.functions'
 
 import appCss from '../styles.css?url'
 
@@ -23,18 +28,24 @@ export const Route = createRootRoute({
     ],
     links: [{ rel: 'stylesheet', href: appCss }],
   }),
-  loader: () => getDraftSessionState(),
+  loader: async () => {
+    const [session, jsonApi] = await Promise.all([
+      getDraftSessionState(),
+      getJsonApiRuntimeConfig(),
+    ])
+    return { session, jsonApi }
+  },
   component: RootComponent,
   shellComponent: RootDocument,
 })
 
 function RootComponent() {
-  const session = Route.useLoaderData()
+  const { session, jsonApi } = Route.useLoaderData()
   return (
-    <>
+    <JsonApiRuntimeProvider config={jsonApi}>
       <DraftBanner session={session} />
       <Outlet />
-    </>
+    </JsonApiRuntimeProvider>
   )
 }
 
