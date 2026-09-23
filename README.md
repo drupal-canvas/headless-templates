@@ -1,11 +1,5 @@
 # Drupal Canvas headless templates
 
-> **ADR21 preparation — not ready to merge or distribute.** All five
-> Next.js, TanStack Start, Nuxt, Astro and Angular starters are being adapted to ADR21
-> Canvas APIs. Upstream refreshed the package pins and locks, but those releases
-> still lack the required ADR21 APIs. See the
-> [adoption and release prerequisites](docs/adr21-adoption.md).
-
 Framework-native starters for decoupled Drupal Canvas frontends. Create a project with Canvas Create:
 
 ```bash

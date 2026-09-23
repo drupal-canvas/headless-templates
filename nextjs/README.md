@@ -2,12 +2,6 @@
 
 A minimal Next.js frontend for Drupal Canvas with React components and Tailwind CSS.
 
-> **Release-blocked ADR21 preparation:** the retained package pins do not yet
-> provide the APIs used here. Do not distribute this revision until
-> [Canvas MR1666](https://git.drupalcode.org/project/canvas/-/merge_requests/1666)
-> is merged, its packages are published, and this template's versions and lockfile
-> are refreshed and validated.
-
 ## Setup
 
 ```bash
@@ -36,8 +30,8 @@ Session credentials stay server-side. Server data loading uses `getClient()`;
 its default serializer returns collections directly as arrays with flattened
 resource fields (see `lib/content.ts`), not `data`/`attributes` documents.
 
-No starter component uses SWR. If adding it, prefetch draft data with server
-`getClient()` and provide request-scoped SWR fallback data with matching keys;
+For components that use SWR, prefetch draft data with server `getClient()` and
+provide request-scoped SWR fallback data with matching keys;
 the renderer's draft client must not fetch during SSR. Do not serialize clients
 or credentials into component props.
 

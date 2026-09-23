@@ -1,5 +1,5 @@
-// Server only: the Angular adapter's automatic routes do not mount ADR21's
-// JSON:API proxy. Use its documented request accessor, not a second session.
+// Server only: mount the JSON:API proxy through the Angular adapter's
+// request accessor so it shares the existing session and response policy.
 import {
   createCanvasHandler,
   createCanvasRequest,

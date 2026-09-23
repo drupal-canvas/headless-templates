@@ -2,12 +2,6 @@
 
 A minimal TanStack Start frontend for Drupal Canvas with React components and Tailwind CSS.
 
-> **Release-blocked ADR21 preparation:** the retained package pins do not yet
-> provide the APIs used here. Do not distribute this revision until
-> [Canvas MR1666](https://git.drupalcode.org/project/canvas/-/merge_requests/1666)
-> is merged, its packages are published, and this template's versions and lockfile
-> are refreshed and validated.
-
 ## Setup
 
 ```bash
@@ -37,8 +31,8 @@ server-side; do not import the SDK's server APIs directly into isomorphic loader
 The reference content helpers use `getClient()` through server functions and
 consume arrays of flattened resources, not `data`/`attributes` documents.
 
-No starter component uses SWR. If adding it, prefetch draft data with server
-`getClient()` and provide request-scoped fallback data with matching keys. The
+For components that use SWR, prefetch draft data with server `getClient()` and
+provide request-scoped fallback data with matching keys. The
 renderer cannot fetch draft data during SSR; never serialize clients or tokens.
 
 ## Commands

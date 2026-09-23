@@ -5,7 +5,7 @@ description:
   `@drupal-canvas/headless` or `@drupal-canvas/headless-*` in `package.json`,
   i.e. a Next.js, Nuxt, Astro, or TanStack Start app rendering Canvas
   components. Establishes what differs from Canvas-rendered React projects:
-  per-framework entry files and slot consumption, the ADR21 portable
+  per-framework entry files and slot consumption, portable
   runtime APIs, SDK-based data fetching, and changed
   push/pull/validate semantics.
 ---
@@ -68,11 +68,7 @@ module from the discovered components (for example under `.canvas/`). Never
 write manual component-to-machine-name mappings and never edit generated
 `.canvas/` files.
 
-## Runtime APIs after ADR21
-
-This template contains preparatory ADR21 guidance. Its package pins must be
-updated to published ADR21-compatible releases before using the new APIs; see
-its README. This section is a local correction to the bundled upstream skill.
+## Runtime APIs
 
 React components use `usePageContext`, `useSiteContext` and `useJsonApiClient`
 from `drupal-canvas/react`, handling nullable results. The renderer establishes
@@ -122,8 +118,8 @@ For portable React components, use `useJsonApiClient()` from
 Browser requests use the application's same-origin SDK proxy. Credentials stay
 in the server/session integration, never in page context or serialized clients.
 
-No starter component currently uses SWR. If adding it, prefetch draft data with
-server `getClient()` and pass authorized, request-scoped SWR fallback data with
+For components that use SWR, prefetch draft data with server `getClient()` and
+pass authorized, request-scoped SWR fallback data with
 matching keys. The renderer's draft client cannot fetch during SSR. Components
 remain synchronous; renewal does not automatically clear application caches.
 

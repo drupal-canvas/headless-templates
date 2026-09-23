@@ -5,7 +5,7 @@ description:
   `@drupal-canvas/headless` or `@drupal-canvas/headless-*` in `package.json`,
   i.e. a Next.js, Nuxt, Astro, TanStack Start, or Angular app rendering Canvas
   components. Establishes what differs from Canvas-rendered React projects:
-  per-framework entry files and slot consumption, the ADR21 portable
+  per-framework entry files and slot consumption, portable
   runtime APIs, SDK-based data fetching, and changed
   push/pull/validate semantics.
 ---
@@ -68,11 +68,7 @@ module from the discovered components (for example under `.canvas/`). Never
 write manual component-to-machine-name mappings and never edit generated
 `.canvas/` files.
 
-## Runtime APIs after ADR21
-
-This template contains preparatory ADR21 guidance. Its package pins must be
-updated to published ADR21-compatible releases before using the new APIs; see
-its README. This section is a local correction to the bundled upstream skill.
+## Runtime APIs
 
 React components use `usePageContext`, `useSiteContext` and `useJsonApiClient`
 from `drupal-canvas/react`, handling nullable results. The renderer establishes
@@ -105,17 +101,16 @@ React hooks/providers. The existing component implementations need no rewrite:
 ## Angular binding
 
 Keep `provideCanvas()` in browser and server bootstrap providers. Components use
-`CanvasPageStore` signals; page/site context is on `store.page()?.context` when
-supplied by the updated shared SDK. The tree renderer takes `tree` and
-`components`, not a React `context` input. Standalone components use `index.ts`
+`CanvasPageStore` signals; page/site context is on `store.page()?.context`.
+The tree renderer takes `tree` and `components`, not a React `context` input. Standalone components use `index.ts`
 and `CanvasSlot` for named slots. Preserve the generated browser registry/server
 manifest boundary and existing component metadata.
 
-The template's server-only wrapper mounts ADR21's proxy using the documented
+The template's server-only wrapper mounts the JSON:API proxy using the documented
 `createCanvasRequest()` accessor and always finalizes its responses. Existing
 request validation and draft/session routes remain unchanged. Use
 `context.server.getClient()` only on the server if adding queries; never
-serialize that accessor or its client. There is no new Angular JSON:API provider.
+serialize that accessor or its client.
 Native Angular components must not import React hooks or providers.
 
 ## Data fetching
@@ -138,8 +133,8 @@ For portable React components, use `useJsonApiClient()` from
 Browser requests use the application's same-origin SDK proxy. Credentials stay
 in the server/session integration, never in page context or serialized clients.
 
-No starter component currently uses SWR. If adding it, prefetch draft data with
-server `getClient()` and pass authorized, request-scoped SWR fallback data with
+For components that use SWR, prefetch draft data with server `getClient()` and
+pass authorized, request-scoped SWR fallback data with
 matching keys. The renderer's draft client cannot fetch during SSR. Components
 remain synchronous; renewal does not automatically clear application caches.
 
