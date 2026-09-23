@@ -46,13 +46,22 @@ app.use(
 );
 const canvas = createCanvasHandler({ manifest });
 app.use((req, res, next) => {
-  canvas(res.locals["canvasRequest"] as Request, (request, context) =>
-    angular.handle(request, context),
-  )
+  const request = res.locals["canvasRequest"] as Request;
+  canvas(request, (request, context) => angular.handle(request, context))
     .then((response) =>
       response ? writeResponseToNodeResponse(response, res) : next(),
     )
-    .catch(next);
+    .catch((error: unknown) => {
+      // Closing a hover preview can cancel SSR before the thumbnail is ready.
+      if (
+        request.signal.aborted &&
+        error instanceof Error &&
+        error.name === "AbortError"
+      ) {
+        return;
+      }
+      next(error);
+    });
 });
 if (isMainModule(import.meta.url)) {
   const port = Number(process.env["PORT"] ?? 4200);
