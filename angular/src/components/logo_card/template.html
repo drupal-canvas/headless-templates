@@ -1,0 +1,14 @@
+@if (image?.src && image) {
+<div
+  class="align-center flex max-h-33 max-w-50 flex-col justify-center gap-4 rounded-2xl p-6 leading-[normal]"
+  [style.backgroundColor]="backgroundColor"
+>
+  <img
+    [src]="image.src"
+    [alt]="image.alt || ''"
+    [attr.width]="image.width"
+    [attr.height]="image.height"
+    class="h-auto w-50 object-contain"
+  />
+</div>
+}

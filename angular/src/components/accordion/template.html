@@ -1,0 +1,9 @@
+<div
+  [class]="'canvas-accordion w-full ' + (variant === 'separated' ? 'flex flex-col gap-2' : '')"
+  data-accordion-group
+  [attr.data-border-color]="borderColor"
+  [attr.data-variant]="variant"
+  [style.--accordion-border]="colors[borderColor]"
+>
+  <canvas-slot name="items" />
+</div>

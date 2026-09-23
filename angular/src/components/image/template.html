@@ -1,0 +1,9 @@
+@if (image?.src && image) {
+<img
+  [src]="image.src"
+  [alt]="image.alt || ''"
+  [attr.width]="image.width"
+  [attr.height]="image.height"
+  class="my-8 h-auto max-w-full"
+/>
+}

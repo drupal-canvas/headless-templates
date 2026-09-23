@@ -1,0 +1,63 @@
+@import "tailwindcss";
+@import "@drupal-canvas/headless/preview.css";
+
+@theme {
+  --font-sans: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-primary-100: var(--color-blue-100);
+  --color-primary-200: var(--color-blue-200);
+  --color-primary-300: var(--color-blue-300);
+  --color-primary-400: var(--color-blue-400);
+  --color-primary-500: var(--color-blue-500);
+  --color-primary-600: var(--color-blue-600);
+  --color-primary-700: var(--color-blue-700);
+  --color-primary-800: var(--color-blue-800);
+  --color-primary-900: var(--color-blue-900);
+  --color-primary-dark: var(--color-primary-700);
+  --color-primary-light: var(--color-slate-400);
+}
+
+html {
+  color: var(--color-slate-950);
+}
+body {
+  margin: 0;
+}
+
+/* display: contents removes boxes, not Angular hosts. Apply sibling borders to
+   the actual item through the slot/children/element chain, not to empty hosts.
+   This also works before hydration and after Canvas reorders/inserts items. */
+.canvas-accordion[data-variant="default"]
+  > canvas-slot
+  > canvas-children
+  > canvas-element:not(:last-child)
+  > app-accordion-item
+  > [data-accordion-item] {
+  border-bottom: 1px solid var(--accordion-border);
+  border-color: var(--accordion-border);
+}
+.canvas-accordion[data-variant="bordered"]
+  > canvas-slot
+  > canvas-children
+  > canvas-element:not(:first-child)
+  > app-accordion-item
+  > [data-accordion-item] {
+  margin-top: -1px;
+}
+.canvas-accordion[data-variant="bordered"]
+  > canvas-slot
+  > canvas-children
+  > canvas-element:first-child
+  > app-accordion-item
+  > [data-accordion-item] {
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+.canvas-accordion[data-variant="bordered"]
+  > canvas-slot
+  > canvas-children
+  > canvas-element:last-child
+  > app-accordion-item
+  > [data-accordion-item] {
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
