@@ -1,98 +1,63 @@
-# Request authority and deployment
+# Angular deployment
 
-The Node server validates authority **before static assets and Canvas routes**,
-then passes the same Request to Canvas and Angular SSR. It explicitly configures
-both Angular request conversion and the SSR engine; Express `trust proxy`,
-`NG_ALLOWED_HOSTS` and `NG_TRUST_PROXY_HEADERS` are not substitutes.
+Build with `npm run build`, then run `npm run preview`. The Node server listens on port 4200, or the port set by `PORT`.
 
-## Direct deployment (default)
+Set `CANVAS_SITE_URL` to the Drupal site URL. The server loads `.env` automatically; existing process environment variables take precedence. Keep these values server-side.
 
-```sh
-export CANVAS_ALLOWED_HOSTS=frontend.example
+Local development uses `localhost` and `127.0.0.1` by default. For deployment, choose one of the configurations below. Cross-site editor previews require HTTPS.
+
+## Direct deployment
+
+Set the hostname that receives requests:
+
+```dotenv
+CANVAS_ALLOWED_HOSTS=frontend.example
 ```
 
-The default hosts are `localhost,127.0.0.1`. Use comma-separated exact hostnames,
-without ports, schemes or paths; bracket IPv6 hosts. Wildcards are rejected.
-All `Forwarded` and `X-Forwarded-*` headers are stripped. This also prevents
-Angular 21 from falling back to client rendering because untrusted forwarding
-headers reached its SSR engine.
+Use comma-separated exact hostnames without ports, schemes, or paths. Bracket IPv6 addresses. Wildcards are not supported. Forwarding headers are ignored.
 
-## Single canonical HTTPS origin
+## Single HTTPS origin
 
-Use this mode when the application has one fixed public address, independently
-of forwarded headers or proxy peer identity:
+Use this configuration when a proxy serves the application at one fixed HTTPS address:
 
-```sh
-unset CANVAS_PROXY_ORIGIN CANVAS_TRUSTED_PROXY_IPS
-export CANVAS_CANONICAL_ORIGIN=https://frontend.example
-export CANVAS_ALLOWED_HOSTS=localhost
+```dotenv
+CANVAS_CANONICAL_ORIGIN=https://frontend.example
+CANVAS_ALLOWED_HOSTS=localhost
 ```
 
-Set the actual public HTTPS origin and expected **upstream** Host hostname(s).
-Canonical and strict-proxy settings are mutually exclusive, even when a
-conflicting variable is present but empty. Invalid configuration fails startup.
+Set `CANVAS_ALLOWED_HOSTS` to the actual upstream Host hostname sent to Node. The public hostname is not automatically allowed as an upstream Host.
 
-- Raw Host must be singular, valid and allowed. The canonical hostname is also
-  allowed by Angular's URL validator, but is not automatically a permitted raw
-  upstream Host.
-- All forwarding headers are removed before conversion. Spoofed values, chains
-  and duplicates cannot change the effective origin.
-- The original request target (`originalUrl ?? url`) must be origin-form.
-  Absolute URLs, `//`, backslashes, fragments, control characters and targets
-  that URL parsing would normalize are rejected. Ordinary percent encoding,
-  plus signs and query delimiters are preserved.
-- The configured origin, including any non-default HTTPS port, determines the
-  effective URL. Method, body stream, abort signal, cookies, Authorization and
-  **browser Origin** are preserved.
+The server uses the configured public origin and ignores forwarding headers. The proxy must provide HTTPS; this setting does not enable TLS or authenticate the proxy. Requests must use origin-form paths, not absolute URLs.
 
-This configures an application address, **not proxy authentication or isolation
-from other local workloads**. The operator must provide actual HTTPS delivery.
-Aliases, localhost browser origins and different public ports intentionally fail
-the draft-exit same-origin check. Change configuration if the public address
-changes; never infer it from a request.
+Remove `CANVAS_PROXY_ORIGIN` and `CANVAS_TRUSTED_PROXY_IPS` from both `.env` and the process environment when using this mode. The two proxy modes are mutually exclusive, even if a conflicting variable is empty.
 
-## Strict trusted-proxy mode
+## Trusted HTTPS proxy
 
-Use this alternative only when the final proxy peer and its header handling are
-under your control:
+Use this alternative only when you control the final proxy and can restrict access to the Node listener:
 
-```sh
-export CANVAS_PROXY_ORIGIN=https://frontend.example
-export CANVAS_TRUSTED_PROXY_IPS=127.0.0.1
-export CANVAS_ALLOWED_HOSTS=localhost,127.0.0.1,frontend-internal.example
+```dotenv
+CANVAS_PROXY_ORIGIN=https://frontend.example
+CANVAS_TRUSTED_PROXY_IPS=127.0.0.1
+CANVAS_ALLOWED_HOSTS=localhost,127.0.0.1,frontend-internal.example
 ```
 
-The public hostname is added to the allowed hosts. Both proxy variables are
-required. The origin must be HTTPS, mounted at `/`, without credentials or query
-parameters. Peer values must be exact socket IP addresses, not CIDRs or
-`X-Forwarded-For` values; IPv4-mapped IPv6 addresses are normalized.
+Remove `CANVAS_CANONICAL_ORIGIN` when using this mode. Both proxy variables are required. The public origin must be HTTPS with no path, credentials, query, or fragment. Its hostname is also allowed as an upstream Host.
 
-Before enabling this mode:
+Trusted peer values must be exact socket IP addresses, not CIDRs or `X-Forwarded-For` values. IPv4-mapped IPv6 addresses are normalized. Only trust loopback or shared NAT addresses if untrusted workloads cannot connect through them.
 
-1. Restrict the Node listener so only the audited proxy connects as a configured
-   peer. Shared NAT or loopback used by untrusted workloads is not trusted identity.
-2. Have the proxy validate the public hostname and terminate TLS. It must
-   **overwrite**, not append to, client-provided forwarding headers.
-3. Send one `X-Forwarded-Host` and `X-Forwarded-Proto: https`, plus an optional
-   numeric `X-Forwarded-Port` matching the configured origin (443 by default).
-4. Send an allowed raw upstream Host. Do not derive configuration from requests.
+Configure the proxy to:
 
-Only those three origin headers from a trusted peer reach Angular. The resulting
-origin must exactly match configuration. Duplicate/chained headers, malformed
-hosts, conflicting ports and untrusted peers claiming forwarding are rejected.
-Other forwarding headers are discarded; prefix routing is unsupported. Without
-forwarding, the request uses its direct socket scheme and validated Host.
+1. Validate the public hostname and terminate TLS.
+2. Overwrite client-supplied forwarding headers rather than append to them.
+3. Send one `X-Forwarded-Host` and `X-Forwarded-Proto: https`, with an optional `X-Forwarded-Port` matching the public origin.
+4. Send an allowed upstream Host and preserve the browser's `Origin` header.
 
-## Security boundaries
+The resulting origin must match `CANVAS_PROXY_ORIGIN`. Untrusted peers claiming forwarding, duplicate or chained headers, and conflicting ports are rejected. Other forwarding headers are discarded; path-prefix routing is unsupported. Requests without forwarding use their direct socket scheme and Host.
 
-`CANVAS_SITE_URL` is the Drupal URL, not the frontend origin. Neither deployment
-mode grants an assertion, token or session. Metadata authorization, signed editor
-origins, PKCE renewal, cookie attributes and private/no-store policies remain
-adapter-owned. Origin is a browser-CSRF defense, not non-browser authentication.
+## Verification
 
-Do not rewrite browser Origin, weaken cookie/CSRF checks, disable TLS validation
-or allow wildcard hosts to make deployment work. Verify actual SSR and native
-POST draft exit through your ingress: legitimate same-origin exit returns 303;
-foreign Origin must still return 403. If strict-proxy prerequisites cannot be
-met, a single-origin application can use canonical mode without claiming proxy
-identity.
+The server validates request authority before serving static files or Canvas routes. Express `trust proxy`, `NG_ALLOWED_HOSTS`, and `NG_TRUST_PROXY_HEADERS` do not replace this configuration.
+
+Verify page rendering and draft exit through the public URL. A legitimate same-origin draft-exit POST returns 303; a foreign `Origin` returns 403. Aliases and different ports are different origins.
+
+Do not disable TLS verification, weaken cookie or origin checks, or allow wildcard hosts to make deployment work. These settings configure request URLs; they do not grant Canvas authentication or draft sessions.

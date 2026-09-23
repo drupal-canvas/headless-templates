@@ -12,8 +12,6 @@ Choose a template interactively, or select one directly:
 npx @drupal-canvas/create@latest --template nextjs
 ```
 
-The templates are Astro, Next.js, Nuxt, TanStack Start, and experimental [Angular](angular/README.md). Each generated project includes draft preview, the Canvas component metadata endpoint, catch-all Drupal page rendering, Tailwind CSS, the Canvas CLI, and the same selected components from [Nebula](https://github.com/acquia/nebula).
+The templates are Astro, Next.js, Nuxt, TanStack Start, and Angular. Each generated project includes draft preview, the Canvas component metadata endpoint, catch-all Drupal page rendering, Tailwind CSS, the Canvas CLI, and the same selected components from [Nebula](https://github.com/acquia/nebula).
 
 Canvas Workbench is included in the React templates (Next.js and TanStack Start).
-
-The experimental [Angular template](angular/README.md) defaults to Angular 22 and also supports Angular 21, with the same 18 components and no Workbench. Public installation awaits the adapter's initial CI release; see its README for release status.

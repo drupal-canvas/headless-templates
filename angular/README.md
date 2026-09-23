@@ -1,90 +1,31 @@
 # Canvas headless template: Angular
 
-Standalone Angular 22 frontend for Drupal Canvas with request-time SSR,
-Tailwind CSS and the same 18 components as the other templates. Angular 21 is
-also supported. No Workbench or cross-template imports.
+A minimal Angular frontend for Drupal Canvas with standalone Angular components and Tailwind CSS.
 
-## Release status
+## Setup
 
-The adapter is not yet published. CI publishes `@drupal-canvas/headless-angular`
-`0.0.0` after the initial merge, matching this template's exact dependency pin.
-The subsequent version merge request releases `0.1.0`. Public installation and
-a registry-resolved template lockfile await the initial release; do not commit
-local tarball dependencies or publish manually.
-
-## Setup (after the adapter release)
-
-Run from this directory:
-
-```sh
-nvm use
-npm install
-cp .env.example .env
-# Set CANVAS_SITE_URL in .env to your Drupal site URL.
-npm run dev
+```bash
+npx @drupal-canvas/create@latest --template angular
 ```
 
-The dev server listens on <http://localhost:4200>. Enable Canvas Headless on
-Drupal and configure the frontend URL there. `CANVAS_SITE_URL` is server-only.
-The server automatically loads `.env`; existing process environment variables
-take precedence. Cross-site editor previews require HTTPS.
+The dev server runs at <http://localhost:4200>. After enabling the Canvas Headless module, configure this URL as a headless frontend.
 
-Node must satisfy `^22.22.3 || ^24.15.0 || >=26.0.0`; `.nvmrc` pins 24.21.0.
+For an existing checkout, copy `.env.example` to `.env` and set `CANVAS_SITE_URL` to your Drupal site URL. The server loads `.env` automatically. Use the Node version in `.nvmrc`.
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` / `npm start` | Generate/watch Canvas sources and start Angular CLI |
-| `npm run check` | Run strict Angular template and TypeScript checks |
-| `npm run build` | Build browser and request-time Node SSR bundles |
-| `npm run preview` | Run production SSR (port 4200, or `PORT`) |
-| `npm run canvas -- validate` | Validate local components without remote sync |
-
-## Angular 21
-
-Use the same adapter package with these dependency versions. Update both
-`dependencies` and `devDependencies` before running `npm install`:
-
-| Packages | Angular 22 default | Angular 21 |
-| --- | --- | --- |
-| `@angular/common`, `compiler`, `core`, `platform-browser`, `platform-server`, `router`, `compiler-cli` | 22.1.7 | 21.2.23 |
-| `@angular/build`, `cli`, `ssr` | 22.1.8 | 21.2.24 |
-| `typescript` | 6.0.2 | 5.9.3 |
-
-Keep the starter's Node requirement, then run check, build and Canvas validation.
-The adapter is partially compiled with Angular 21 for both consumers.
+See [deployment](DEPLOYMENT.md) for production hosts and HTTPS proxy configuration.
 
 ## Project structure
 
-- `src/components/*`: standalone components with ordinary inputs and default
-  exports. YAML machine names and mocks match the other templates.
-- `src/styles.css`: Tailwind theme, Canvas preview CSS and host-aware accordion
-  selectors.
-- `src/routes.ts`, `src/page.ts`: catch-all resolver, not-found UI and draft banners.
-- `src/main.ts`, `src/main.server.ts`: hydration, routing and Canvas providers;
-  all routes use `RenderMode.Server`, not prerendering.
-- `src/server.ts`, `src/request-policy.ts`: validated request conversion, static
-  assets and adapter mounting. See [deployment](DEPLOYMENT.md) for exact allowed
-  hosts and canonical-origin or trusted-proxy configuration.
+- **Components:** `src/components` contains the standalone Angular components exposed to Canvas.
+- **Styles:** `src/styles.css` contains the global Tailwind styles.
+- **Canvas integration:** `canvas-angular` generates the component registry and server-only metadata, while `src/server.ts` handles draft sessions, component metadata, and component-library thumbnails. The catch-all route renders Drupal content through `CanvasComponentTree`.
 
-`canvas-angular` generates the ignored registry and server-only metadata modules
-before Angular CLI runs. Production metadata is embedded in the server bundle;
-component source files are not needed at runtime. Never import the generated
-manifest or server credentials into browser code.
+## Commands
 
-The adapter owns draft activation/renewal/exit, authenticated metadata, page and
-entity access, component thumbnails, head updates and editor geometry. The app
-owns banner presentation. Active embedded previews hide the banner; expired
-sessions show the signed renewal link. Exit uses a normal POST form with
-`ngNoForm`.
-
-## Component authoring
-
-Use `CanvasComponentTree` and `CanvasSlot` from the Angular adapter. Render each
-slot once within its registry component's view. Registry hosts use
-`host: { style: 'display: contents' }` to avoid extra layout boxes, but remain in
-the DOM: direct-child selectors must account for Angular hosts, as the accordion
-stylesheet does. Do not bypass hydration.
-
-Only render trusted Drupal HTML. `CanvasMarkup` deliberately bypasses Angular
-sanitization; raw HTML descendants are replaced during hydration or updates.
-Use Angular templates for stateful interactions.
+| Command                      | Purpose                                    |
+| ---------------------------- | ------------------------------------------ |
+| `npm run dev`                | Start Angular                              |
+| `npm run build`              | Build the browser bundles and Node server  |
+| `npm run preview`            | Preview the build                          |
+| `npm run check`              | Run Angular template and TypeScript checks |
+| `npm run canvas -- validate` | Validate Canvas components                 |
