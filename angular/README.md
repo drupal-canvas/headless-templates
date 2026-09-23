@@ -19,14 +19,15 @@ Run from this directory:
 ```sh
 nvm use
 npm install
-export CANVAS_SITE_URL=https://your-drupal-site.example
+cp .env.example .env
+# Set CANVAS_SITE_URL in .env to your Drupal site URL.
 npm run dev
 ```
 
 The dev server listens on <http://localhost:4200>. Enable Canvas Headless on
-Drupal and configure the frontend URL there. `CANVAS_SITE_URL` is server-only;
-Angular does not automatically load `.env` files. Export it or configure it in
-the deployment environment. Cross-site editor previews require HTTPS.
+Drupal and configure the frontend URL there. `CANVAS_SITE_URL` is server-only.
+The server automatically loads `.env`; existing process environment variables
+take precedence. Cross-site editor previews require HTTPS.
 
 Node must satisfy `^22.22.3 || ^24.15.0 || >=26.0.0`; `.nvmrc` pins 24.21.0.
 

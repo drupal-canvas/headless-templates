@@ -1,4 +1,6 @@
+import { existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { loadEnvFile } from "node:process";
 import express from "express";
 import {
   AngularNodeAppEngine,
@@ -11,6 +13,10 @@ import { trustSystemCertificates } from "@drupal-canvas/headless/node";
 
 import manifest from "./canvas-manifest.generated";
 import { prepareRequest, requestPolicy } from "./request-policy";
+// Angular CLI does not load server-side environment files automatically.
+if (existsSync(".env")) {
+  loadEnvFile(".env");
+}
 // Trust installed development/system CAs without disabling TLS verification.
 trustSystemCertificates();
 const app = express();
