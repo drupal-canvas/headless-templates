@@ -66,8 +66,8 @@ export async function readContentLists(): Promise<ContentLists> {
     client.getCollection<Array<Article>>('node--article'),
   ])
   return {
-    canvasPages: canvasPages ?? [],
-    articles: articles ?? [],
+    canvasPages,
+    articles,
   }
 }
 
