@@ -8,14 +8,7 @@ import {
 type NuxtHeadInput = Parameters<typeof useHead>[0];
 
 const route = useRoute();
-const slug = computed(() =>
-  Array.isArray(route.params.slug)
-    ? route.params.slug.join('/')
-    : (route.params.slug ?? ''),
-);
-const path = computed(
-  () => `/${slug.value.split('/').map(encodeURIComponent).join('/')}`,
-);
+const path = computed(() => route.fullPath.split('#')[0]);
 const { data: result } = await useFetch<PageResult | null>('/api/page', {
   query: { path },
 });
