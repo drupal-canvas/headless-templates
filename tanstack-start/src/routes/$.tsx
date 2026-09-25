@@ -6,12 +6,15 @@ import { createFileRoute, notFound, redirect } from '@tanstack/react-router'
 import { getPageForPath } from '#/server/canvas.functions'
 
 export const Route = createFileRoute('/$')({
-  loader: async ({ params }) => {
+  loaderDeps: ({ search }) => search,
+  loader: async ({ params, location }) => {
     const path = `/${(params._splat ?? '')
       .split('/')
       .map(encodeURIComponent)
       .join('/')}`
-    const result = await getPageForPath({ data: path })
+    const result = await getPageForPath({
+      data: path + location.searchStr,
+    })
     if (!result) {
       throw notFound()
     }
