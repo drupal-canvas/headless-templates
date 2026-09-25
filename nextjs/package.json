@@ -15,9 +15,9 @@
     "check": "npm run lint && npm run type-check"
   },
   "dependencies": {
-    "@drupal-canvas/headless": "^0.8.0",
-    "@drupal-canvas/headless-next": "^0.6.0",
-    "@drupal-canvas/headless-react": "^0.4.2",
+    "@drupal-canvas/headless": "^0.9.0",
+    "@drupal-canvas/headless-next": "^0.6.1",
+    "@drupal-canvas/headless-react": "^0.4.3",
     "class-variance-authority": "^0.7.1",
     "drupal-canvas": "^0.6.0",
     "next": "^16.2.12",
@@ -29,7 +29,7 @@
     "sharp": "^0.35.3"
   },
   "devDependencies": {
-    "@drupal-canvas/cli": "^0.25.1",
+    "@drupal-canvas/cli": "^0.25.2",
     "@drupal-canvas/eslint-config": "^0.10.0",
     "@drupal-canvas/workbench": "^0.12.0",
     "@tailwindcss/postcss": "^4.1.18",
