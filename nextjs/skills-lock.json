@@ -49,6 +49,12 @@
       "skillPath": "skills/canvas-design-decomposition/SKILL.md",
       "computedHash": "09e34d921c9161d9053eaeb2dca7ed7daf44c0f5269bb2e259c1851b62f9679e"
     },
+    "canvas-headless": {
+      "source": "drupal-canvas/skills",
+      "sourceType": "github",
+      "skillPath": "skills/canvas-headless/SKILL.md",
+      "computedHash": "8483421c9aa1a894358520e06f34adf46a0d079cee6bb131e37c4f972a68874b"
+    },
     "canvas-navigation-components": {
       "source": "drupal-canvas/skills",
       "sourceType": "github",
