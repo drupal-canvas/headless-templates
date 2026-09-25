@@ -8,7 +8,7 @@ import {
   isMainModule,
   writeResponseToNodeResponse,
 } from "@angular/ssr/node";
-import { createCanvasHandler } from "@drupal-canvas/headless-angular/server";
+import { createCanvasHandlerWithProxy } from "./canvas-handler";
 import { trustSystemCertificates } from "@drupal-canvas/headless/node";
 
 import manifest from "./canvas-manifest.generated";
@@ -44,7 +44,7 @@ app.use(
     maxAge: "1y",
   }),
 );
-const canvas = createCanvasHandler({ manifest });
+const canvas = createCanvasHandlerWithProxy({ manifest });
 app.use((req, res, next) => {
   const request = res.locals["canvasRequest"] as Request;
   canvas(request, (request, context) => angular.handle(request, context))

@@ -16,6 +16,19 @@ The dev server runs at <http://localhost:3000>. After enabling the Canvas Headle
 - **Styles:** `app/assets/css/main.css` contains the global Tailwind styles.
 - **Canvas integration:** The Nuxt module adds draft-session routes and exposes component metadata at `/api/canvas/components`. The catch-all page renders Drupal content through `CanvasComponentTree`.
 
+## Data access
+
+Native Vue components keep using the Nuxt SDK and framework data-loading paths;
+React hooks/providers are not added to this template. Page/site data is available
+in the SDK's `page.context` for application use, not automatically as React context.
+
+The Canvas Nuxt module mounts the same-origin JSON:API proxy at
+`CANVAS_JSONAPI_PROXY_PATH` (default `/api/canvas/jsonapi`); do not add a duplicate
+application route. Server code retains request-scoped `getClient(event)` and the
+existing draft-session lifecycle. The reference `/api/content` route returns
+arrays of flattened resources from `DefaultSerializer`, without unwrapping `data`
+or accessing `attributes`. See `shared/content.ts` for types and path helpers.
+
 ## Commands
 
 | Command           | Purpose                         |

@@ -5,23 +5,19 @@
  */
 export interface Article {
   id: string;
-  attributes: {
-    title: string;
-    status: boolean;
-    moderation_state?: string;
-    drupal_internal__nid: number;
-    path?: { alias?: string | null } | null;
-  };
+  title: string;
+  status: boolean;
+  moderation_state?: string;
+  drupal_internal__nid: number;
+  path?: { alias?: string | null } | null;
 }
 
 export interface CanvasPage {
   id: string;
-  attributes: {
-    title: string;
-    status: boolean;
-    drupal_internal__id: number;
-    path?: { alias?: string | null } | null;
-  };
+  title: string;
+  status: boolean;
+  drupal_internal__id: number;
+  path?: { alias?: string | null } | null;
 }
 
 /**
@@ -39,9 +35,7 @@ export interface ContentLists {
  * rest.
  */
 export function canvasPagePath(page: CanvasPage): string {
-  return (
-    page.attributes.path?.alias || `/page/${page.attributes.drupal_internal__id}`
-  );
+  return page.path?.alias || `/page/${page.drupal_internal__id}`;
 }
 
 /**
@@ -50,8 +44,5 @@ export function canvasPagePath(page: CanvasPage): string {
  * land in the catch-all route and render through fetchPage().
  */
 export function articlePath(article: Article): string {
-  return (
-    article.attributes.path?.alias ||
-    `/node/${article.attributes.drupal_internal__nid}`
-  );
+  return article.path?.alias || `/node/${article.drupal_internal__nid}`;
 }

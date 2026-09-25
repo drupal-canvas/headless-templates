@@ -16,6 +16,25 @@ The dev server runs at <http://localhost:3000>. After enabling the Canvas Headle
 - **Styles:** `src/styles.css` contains the global Tailwind styles.
 - **Canvas integration:** The Canvas Vite plugin generates the component registry, while the API routes and middleware handle draft sessions, component metadata, and component-library thumbnails. The catch-all route renders Drupal content through `CanvasComponentTree`.
 
+## Portable React components
+
+The root loader obtains nonsecret JSON:API runtime configuration through a server
+function and supplies it via `JsonApiRuntimeProvider`. The page renderer receives
+`context={page.context}`. Components import `usePageContext`, `useSiteContext`
+and `useJsonApiClient` from `drupal-canvas/react`; handle nullable results.
+Existing `Image` and `FormattedText` imports stay at `drupal-canvas`.
+
+The `/api/canvas/jsonapi/$` route delegates to the SDK's proxy handlers, including
+PUT so unsupported requests reach the shared 405 response. If changing
+`CANVAS_JSONAPI_PROXY_PATH`, move this route to match it. Session credentials stay
+server-side; do not import the SDK's server APIs directly into isomorphic loaders.
+The reference content helpers use `getClient()` through server functions and
+consume arrays of flattened resources, not `data`/`attributes` documents.
+
+For components that use SWR, prefetch draft data with server `getClient()` and
+provide request-scoped fallback data with matching keys. The
+renderer cannot fetch draft data during SSR; never serialize clients or tokens.
+
 ## Commands
 
 | Command             | Purpose                                |

@@ -16,6 +16,19 @@ The dev server runs at <http://localhost:4321>. After enabling the Canvas Headle
 - **Styles:** `src/styles/global.css` contains the global Tailwind styles.
 - **Canvas integration:** The headless integration adds draft-session routes and exposes component metadata at `/api/canvas/components`. The catch-all route renders Drupal content through `CanvasComponentTree`.
 
+## Data access
+
+Native Astro components keep using the Astro SDK and server frontmatter; no React
+hooks/providers are added. Page/site data is available in the SDK's `page.context`
+for application use, not automatically as React context.
+
+The Canvas integration mounts the same-origin JSON:API proxy at
+`CANVAS_JSONAPI_PROXY_PATH` (default `/api/canvas/jsonapi`); do not add a duplicate
+application route. Server code retains `getClient(Astro)` with the request context
+and existing draft-session lifecycle. The reference helpers in `src/lib/content.ts`
+consume collections as arrays with flattened resource fields from
+`DefaultSerializer`, not `data`/`attributes` documents.
+
 ## Commands
 
 | Command           | Purpose                          |
