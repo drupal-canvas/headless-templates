@@ -18,8 +18,8 @@
     "@angular/platform-server": "22.1.7",
     "@angular/router": "22.1.7",
     "@angular/ssr": "22.1.8",
-    "@drupal-canvas/headless": "^0.10.0",
-    "@drupal-canvas/headless-angular": "0.2.2",
+    "@drupal-canvas/headless": "^0.11.0",
+    "@drupal-canvas/headless-angular": "0.2.3",
     "express": "5.2.1",
     "rxjs": "7.8.2",
     "tslib": "2.8.1"
@@ -31,7 +31,7 @@
     "@types/express": "5.0.6",
     "@types/node": "24.10.1",
     "typescript": "6.0.2",
-    "@drupal-canvas/cli": "^0.26.0",
+    "@drupal-canvas/cli": "^0.26.2",
     "@tailwindcss/postcss": "^4.1.18",
     "tailwindcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.20"

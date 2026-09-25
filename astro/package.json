@@ -16,15 +16,15 @@
   },
   "dependencies": {
     "@astrojs/node": "^11.0.2",
-    "@drupal-canvas/headless": "^0.10.0",
-    "@drupal-canvas/headless-astro": "^0.6.0",
+    "@drupal-canvas/headless": "^0.11.0",
+    "@drupal-canvas/headless-astro": "^0.7.0",
     "astro": "^7.1.6",
     "unhead": "^3.3.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
-    "@drupal-canvas/cli": "^0.26.0",
-    "@drupal-canvas/eslint-config": "^0.10.0",
+    "@drupal-canvas/cli": "^0.26.2",
+    "@drupal-canvas/eslint-config": "^0.10.1",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.1.18",
     "eslint": "^9.39.4",
