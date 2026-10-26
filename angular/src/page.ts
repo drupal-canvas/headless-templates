@@ -56,7 +56,11 @@ import components from "./canvas-components.generated";
       }
     }
     @if (store.page(); as page) {
-      <canvas-component-tree [tree]="page.content" [components]="components" />
+      <canvas-component-tree
+        [tree]="page.content"
+        [components]="components"
+        [preview]="page.isPreview"
+      />
     } @else {
       <main class="mx-auto w-full max-w-2xl px-6 py-10">
         <p class="mb-6">

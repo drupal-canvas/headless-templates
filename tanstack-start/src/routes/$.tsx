@@ -34,7 +34,13 @@ export const Route = createFileRoute('/$')({
 
 function CatchAllPage() {
   const { page } = Route.useLoaderData()
-  return <CanvasComponentTree tree={page.content} context={page.context} />
+  return (
+    <CanvasComponentTree
+      tree={page.content}
+      context={page.context}
+      preview={page.isPreview}
+    />
+  )
 }
 
 function NotFoundPage() {
