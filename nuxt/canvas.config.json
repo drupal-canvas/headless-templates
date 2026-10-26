@@ -5,6 +5,6 @@
   "sync": {
     "pages": false,
     "contentTemplates": false,
-    "regions": false
+    "pageTemplates": false
   }
 }
