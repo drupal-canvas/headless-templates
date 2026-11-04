@@ -41,8 +41,7 @@ SWR rather than becoming async components.
 
 The example follows the
 [SDK reference](https://git.drupalcode.org/project/canvas/-/blob/d1ffcdd69d7be9dc753c8deccc0b1905f588acca/packages/headless/README.md#server-rendering-and-swr).
-When adopting it, add `swr` as a direct application dependency (`npm install swr`);
-it is not included in the template.
+`swr` is already a direct dependency of the template.
 
 Define an application-owned client boundary at `components/swr-fallback.tsx`
 (this is not an SDK export):
