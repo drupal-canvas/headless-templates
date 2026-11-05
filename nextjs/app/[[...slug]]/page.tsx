@@ -43,5 +43,11 @@ export default async function CatchAllPage({ params }: CatchAllPageProps) {
     redirect(url);
   }
 
-  return <CanvasComponentTree tree={page.content} context={page.context} />;
+  return (
+    <CanvasComponentTree
+      tree={page.content}
+      context={page.context}
+      preview={page.isPreview}
+    />
+  );
 }

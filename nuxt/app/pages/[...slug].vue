@@ -48,7 +48,11 @@ useHead(
 </script>
 
 <template>
-  <CanvasComponentTree v-if="page" :tree="page.content" />
+  <CanvasComponentTree
+    v-if="page"
+    :tree="page.content"
+    :preview="page.isPreview"
+  />
   <main v-else class="mx-auto w-full max-w-2xl px-6 py-10">
     <p class="mb-6">
       <NuxtLink to="/" class="text-sm underline">← Back to home</NuxtLink>

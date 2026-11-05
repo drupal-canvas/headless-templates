@@ -84,7 +84,11 @@ const fallback = {
 
 return (
   <SwrFallback fallback={fallback}>
-    <CanvasComponentTree tree={page.content} context={page.context} />
+    <CanvasComponentTree
+      tree={page.content}
+      context={page.context}
+      preview={page.isPreview}
+    />
   </SwrFallback>
 );
 ```

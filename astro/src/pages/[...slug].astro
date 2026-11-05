@@ -34,7 +34,7 @@ const { headTags } = head.render();
 <Layout headTags={headTags}>
   {
     page ? (
-      <CanvasComponentTree tree={page.content} />
+      <CanvasComponentTree tree={page.content} preview={page.isPreview} />
     ) : (
       <main class="mx-auto w-full max-w-2xl px-6 py-10">
         <p class="mb-6">
