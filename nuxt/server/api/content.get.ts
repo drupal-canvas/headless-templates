@@ -18,8 +18,5 @@ export default defineEventHandler(async (event): Promise<ContentLists> => {
     client.getCollection<Article[]>('node--article'),
   ]);
 
-  return {
-    canvasPages: canvasPages ?? [],
-    articles: articles ?? [],
-  };
+  return { canvasPages, articles };
 });
