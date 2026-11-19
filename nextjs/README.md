@@ -73,10 +73,7 @@ import SwrFallback from '@/components/swr-fallback';
 
 // Inside CatchAllPage, after the redirect handling:
 const client = await getClient();
-const articles =
-  (await client.getCollection<{ id: string; title: string }[]>(
-    'node--article',
-  )) ?? [];
+const articles = await client.getCollection<{ id: string; title: string }[]>('node--article');
 // Project only the fields needed across the server/client boundary.
 const fallback = {
   articles: articles.map(({ id, title }) => ({ id, title })),

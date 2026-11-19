@@ -27,7 +27,7 @@ export interface CanvasPage {
  */
 export async function getArticles(): Promise<Article[]> {
   const client = await getClient();
-  return (await client.getCollection<Article[]>('node--article')) ?? [];
+  return await client.getCollection<Article[]>('node--article');
 }
 
 /**
@@ -35,9 +35,7 @@ export async function getArticles(): Promise<Article[]> {
  */
 export async function getCanvasPages(): Promise<CanvasPage[]> {
   const client = await getClient();
-  return (
-    (await client.getCollection<CanvasPage[]>('canvas_page--canvas_page')) ?? []
-  );
+  return await client.getCollection<CanvasPage[]>('canvas_page--canvas_page');
 }
 
 /**

@@ -34,7 +34,7 @@ export async function getArticles(
   context: AstroDraftContext,
 ): Promise<Article[]> {
   const client = await getClient(context);
-  return (await client.getCollection<Article[]>('node--article')) ?? [];
+  return await client.getCollection<Article[]>('node--article');
 }
 
 /**
@@ -44,9 +44,7 @@ export async function getCanvasPages(
   context: AstroDraftContext,
 ): Promise<CanvasPage[]> {
   const client = await getClient(context);
-  return (
-    (await client.getCollection<CanvasPage[]>('canvas_page--canvas_page')) ?? []
-  );
+  return await client.getCollection<CanvasPage[]>('canvas_page--canvas_page');
 }
 
 /**
